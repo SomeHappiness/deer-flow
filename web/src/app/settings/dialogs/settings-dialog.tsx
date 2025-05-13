@@ -101,9 +101,9 @@ export function SettingsDialog() {
       </Tooltip>
       <DialogContent className="sm:max-w-[850px]">
         <DialogHeader>
-          <DialogTitle>BTF Brain Settings</DialogTitle>
+          <DialogTitle>Nina Settings</DialogTitle>
           <DialogDescription>
-            Manage your BTF Brain settings here.
+            Manage your Nina settings here.
           </DialogDescription>
         </DialogHeader>
         <Tabs value={activeTabId}>

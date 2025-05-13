@@ -19,6 +19,7 @@ def _create_llm_use_conf(llm_type: LLMType, conf: Dict[str, Any]) -> ChatOpenAI:
         "basic": conf.get("BASIC_MODEL"),
         "vision": conf.get("VISION_MODEL"),
     }
+    print(llm_type_map)
     llm_conf = llm_type_map.get(llm_type)
     if not llm_conf:
         raise ValueError(f"Unknown LLM type: {llm_type}")

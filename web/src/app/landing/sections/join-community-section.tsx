@@ -12,7 +12,7 @@ import { SectionHeader } from "../components/section-header";
 /**
  * 加入社区区块组件
  * 
- * 鼓励用户加入BTF Brain社区，参与贡献和协作
+ * 鼓励用户加入Nina社区，参与贡献和协作
  * @returns {JSX.Element} 加入社区区块
  */
 export function JoinCommunitySection() {
@@ -23,18 +23,18 @@ export function JoinCommunitySection() {
         anchor="join-community"
         title={
           <AuroraText colors={["#60A5FA", "#A5FA60", "#A560FA"]}>
-            Join the BTF Brain Community
+            Join the Nina 
           </AuroraText>
         }
-        description="Contribute brilliant ideas to shape the future of BTF Brain. Collaborate, innovate, and make impacts."
+        description="make the world cooler!"
       />
-      {/* GitHub贡献按钮 */}
+      {/* GitHub贡献按钮
       <Button className="text-xl" size="lg" asChild>
         <Link href="https://github.com/bytedance/deer-flow" target="_blank">
           <GithubFilled />
           Contribute Now
         </Link>
-      </Button>
+      </Button> */}
     </section>
   );
 }

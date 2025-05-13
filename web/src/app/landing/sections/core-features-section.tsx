@@ -77,7 +77,7 @@ const features = [
 /**
  * 核心功能区块组件
  * 
- * 展示BTF Brain的主要功能，用户可点击卡片了解更多
+ * 展示Nina的主要功能，用户可点击卡片了解更多
  * @returns {JSX.Element} 核心功能区块
  */
 export function CoreFeatureSection() {
@@ -87,7 +87,7 @@ export function CoreFeatureSection() {
       <SectionHeader
         anchor="core-features"
         title="Core Features"
-        description="Find out what makes BTF Brain effective."
+        description="Find out what makes Nina effective."
       />
       {/* 功能卡片网格 */}
       <BentoGrid className="w-3/4 lg:grid-cols-2 lg:grid-rows-3">

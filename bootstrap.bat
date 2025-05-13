@@ -9,14 +9,14 @@ IF "%MODE%"=="dev" GOTO DEV
 IF "%MODE%"=="development" GOTO DEV
 
 :PROD
-echo Starting BTF Brain in [PRODUCTION] mode...
+echo Starting Nina in [PRODUCTION] mode...
 uv run server.py
 cd web
 pnpm start
 GOTO END
 
 :DEV
-echo Starting BTF Brain in [DEVELOPMENT] mode...
+echo Starting Nina in [DEVELOPMENT] mode...
 start uv run server.py --reload
 cd web
 start pnpm dev

@@ -1,4 +1,4 @@
-# 🦌 BTF Brain
+# 🦌 Nina
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -7,9 +7,9 @@
 
 > オープンソースから生まれ、オープンソースに還元する。
 
-**BTF Brain**（**D**eep **E**xploration and **E**fficient **R**esearch **Flow**）は、オープンソースコミュニティの素晴らしい成果の上に構築されたコミュニティ主導の深層研究フレームワークです。私たちの目標は、言語モデルとウェブ検索、クローリング、Pythonコード実行などの専門ツールを組み合わせながら、これを可能にしたコミュニティに貢献することです。
+**Nina**（**D**eep **E**xploration and **E**fficient **R**esearch **Flow**）は、オープンソースコミュニティの素晴らしい成果の上に構築されたコミュニティ主導の深層研究フレームワークです。私たちの目標は、言語モデルとウェブ検索、クローリング、Pythonコード実行などの専門ツールを組み合わせながら、これを可能にしたコミュニティに貢献することです。
 
-詳細については[BTF Brainの公式ウェブサイト](https://BTF Brain.tech/)をご覧ください。
+詳細については[Ninaの公式ウェブサイト](https://Nina.tech/)をご覧ください。
 
 ## デモ
 
@@ -17,18 +17,18 @@
 
 https://github.com/user-attachments/assets/f3786598-1f2a-4d07-919e-8b99dfa1de3e
 
-このデモでは、BTF Brainの使用方法を紹介しています：
+このデモでは、Ninaの使用方法を紹介しています：
 - MCPサービスとのシームレスな統合
 - 深層研究プロセスの実施と画像を含む包括的なレポートの作成
 - 生成されたレポートに基づくポッドキャストオーディオの作成
 
 ### リプレイ例
 
-- [エッフェル塔は世界一高いビルと比べてどれくらい高い？](https://BTF Brain.tech/chat?replay=eiffel-tower-vs-tallest-building)
-- [GitHubで最も人気のあるリポジトリは？](https://BTF Brain.tech/chat?replay=github-top-trending-repo)
-- [南京の伝統料理に関する記事を書く](https://BTF Brain.tech/chat?replay=nanjing-traditional-dishes)
-- [賃貸アパートの装飾方法は？](https://BTF Brain.tech/chat?replay=rental-apartment-decoration)
-- [公式ウェブサイトでより多くのリプレイ例をご覧ください。](https://BTF Brain.tech/#case-studies)
+- [エッフェル塔は世界一高いビルと比べてどれくらい高い？](https://Nina.tech/chat?replay=eiffel-tower-vs-tallest-building)
+- [GitHubで最も人気のあるリポジトリは？](https://Nina.tech/chat?replay=github-top-trending-repo)
+- [南京の伝統料理に関する記事を書く](https://Nina.tech/chat?replay=nanjing-traditional-dishes)
+- [賃貸アパートの装飾方法は？](https://Nina.tech/chat?replay=rental-apartment-decoration)
+- [公式ウェブサイトでより多くのリプレイ例をご覧ください。](https://Nina.tech/#case-studies)
 
 ---
 
@@ -49,7 +49,7 @@ https://github.com/user-attachments/assets/f3786598-1f2a-4d07-919e-8b99dfa1de3e
 
 ## クイックスタート
 
-BTF BrainはPythonで開発され、Node.jsで書かれたWeb UIが付属しています。スムーズなセットアッププロセスを確保するために、以下のツールの使用をお勧めします：
+NinaはPythonで開発され、Node.jsで書かれたWeb UIが付属しています。スムーズなセットアッププロセスを確保するために、以下のツールの使用をお勧めします：
 
 ### 推奨ツール
 - **[`uv`](https://docs.astral.sh/uv/getting-started/installation/):**
@@ -137,7 +137,7 @@ bootstrap.bat -d
 
 ## サポートされている検索エンジン
 
-BTF Brainは複数の検索エンジンをサポートしており、`.env`ファイルの`SEARCH_API`変数で設定できます：
+Ninaは複数の検索エンジンをサポートしており、`.env`ファイルの`SEARCH_API`変数で設定できます：
 
 - **Tavily**（デフォルト）：AI アプリケーション向けの専門検索 API
     - `.env`ファイルに`TAVILY_API_KEY`が必要
@@ -203,10 +203,10 @@ SEARCH_API=tavily
 
 ## アーキテクチャ
 
-BTF Brainは、自動研究とコード分析のためのモジュラーなマルチエージェントシステムアーキテクチャを実装しています。システムはLangGraph上に構築され、コンポーネントが明確に定義されたメッセージパッシングシステムを通じて通信する柔軟な状態ベースのワークフローを実現しています。
+Ninaは、自動研究とコード分析のためのモジュラーなマルチエージェントシステムアーキテクチャを実装しています。システムはLangGraph上に構築され、コンポーネントが明確に定義されたメッセージパッシングシステムを通じて通信する柔軟な状態ベースのワークフローを実現しています。
 
 ![アーキテクチャ図](./assets/architecture.png)
-> [BTF Brain.tech](https://BTF Brain.tech/#multi-agent-architecture)でライブで確認できます
+> [Nina.tech](https://Nina.tech/#multi-agent-architecture)でライブで確認できます
 
 システムは以下のコンポーネントを含む合理化されたワークフローを採用しています：
 
@@ -232,7 +232,7 @@ BTF Brainは、自動研究とコード分析のためのモジュラーなマ�
 
 ## テキスト読み上げ統合
 
-BTF Brainには現在、研究レポートを音声に変換できるテキスト読み上げ（TTS）機能が含まれています。この機能は火山引擎TTS APIを使用して高品質なテキストオーディオを生成します。速度、音量、ピッチなどの特性もカスタマイズ可能です。
+Ninaには現在、研究レポートを音声に変換できるテキスト読み上げ（TTS）機能が含まれています。この機能は火山引擎TTS APIを使用して高品質なテキストオーディオを生成します。速度、音量、ピッチなどの特性もカスタマイズ可能です。
 
 ### TTS APIの使用
 
@@ -281,11 +281,11 @@ make format
 
 ### LangGraph Studioによるデバッグ
 
-BTF BrainはワークフローアーキテクチャとしてLangGraphを使用しています。LangGraph Studioを使用してワークフローをリアルタイムでデバッグおよび可視化できます。
+NinaはワークフローアーキテクチャとしてLangGraphを使用しています。LangGraph Studioを使用してワークフローをリアルタイムでデバッグおよび可視化できます。
 
 #### ローカルでLangGraph Studioを実行
 
-BTF Brainには`langgraph.json`設定ファイルが含まれており、これがLangGraph Studioのグラフ構造と依存関係を定義しています。このファイルはプロジェクトで定義されたワークフローグラフを指し、`.env`ファイルから環境変数を自動的に読み込みます。
+Ninaには`langgraph.json`設定ファイルが含まれており、これがLangGraph Studioのグラフ構造と依存関係を定義しています。このファイルはプロジェクトで定義されたワークフローグラフを指し、`.env`ファイルから環境変数を自動的に読み込みます。
 
 ##### Mac
 
@@ -333,7 +333,7 @@ Studio UIで研究トピックを送信すると、次を含む全ワークフ�
 
 ## 例
 
-以下の例はBTF Brainの機能を示しています：
+以下の例はNinaの機能を示しています：
 
 ### 研究レポート
 
@@ -410,7 +410,7 @@ uv run main.py --help
 
 ### 人間参加型ループ
 
-BTF Brainには人間参加型ループメカニズムが含まれており、研究計画を実行する前にレビュー、編集、承認することができます：
+Ninaには人間参加型ループメカニズムが含まれており、研究計画を実行する前にレビュー、編集、承認することができます：
 
 1. **計画レビュー**：人間参加型ループが有効な場合、システムは実行前に生成された研究計画を表示
 
@@ -452,22 +452,22 @@ BTF Brainには人間参加型ループメカニズムが含まれており、�
 
 ## 謝辞
 
-BTF Brainはオープンソースコミュニティの素晴らしい成果の上に構築されています。BTF Brainを可能にしたすべてのプロジェクトと貢献者に深く感謝します。私たちは確かに巨人の肩の上に立っています。
+Ninaはオープンソースコミュニティの素晴らしい成果の上に構築されています。Ninaを可能にしたすべてのプロジェクトと貢献者に深く感謝します。私たちは確かに巨人の肩の上に立っています。
 
 以下のプロジェクトに心からの感謝を表します：
 
 - **[LangChain](https://github.com/langchain-ai/langchain)**：彼らの優れたフレームワークは、シームレスな統合と機能性を実現するLLM相互作用とチェーンに力を与えています。
-- **[LangGraph](https://github.com/langchain-ai/langgraph)**：マルチエージェントオーケストレーションへの革新的アプローチは、BTF Brainの複雑なワークフローの実現に不可欠でした。
+- **[LangGraph](https://github.com/langchain-ai/langgraph)**：マルチエージェントオーケストレーションへの革新的アプローチは、Ninaの複雑なワークフローの実現に不可欠でした。
 
 これらのプロジェクトはオープンソースコラボレーションの変革力を示しており、その基盤の上に構築できることを誇りに思います。
 
 ### 主要貢献者
-`BTF Brain`の主要な作者に心から感謝します。彼らのビジョン、情熱、献身がこのプロジェクトを実現しました：
+`Nina`の主要な作者に心から感謝します。彼らのビジョン、情熱、献身がこのプロジェクトを実現しました：
 
 - **[Daniel Walnut](https://github.com/hetaoBackend/)**
 - **[Henry Li](https://github.com/magiccube/)**
 
-あなたの揺るぎない取り組みと専門知識がBTF Brainの成功を推進しています。この旅をリードしていただき光栄です。
+あなたの揺るぎない取り組みと専門知識がNinaの成功を推進しています。この旅をリードしていただき光栄です。
 
 ## スター履歴
 

@@ -5,7 +5,7 @@ import { create } from "zustand";
 
 import type { MCPServerMetadata, SimpleMCPServerMetadata } from "../mcp";
 
-const SETTINGS_KEY = "BTF Brain.settings";
+const SETTINGS_KEY = "Nina.settings";
 
 const DEFAULT_SETTINGS: SettingsState = {
   general: {

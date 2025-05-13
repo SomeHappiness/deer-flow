@@ -25,13 +25,13 @@ export function useReplayMetadata() {
         setError(false);
         setTitle(title ?? null);
         if (title) {
-          document.title = `${title} - BTF Brain`;
+          document.title = `${title} - Nina`;
         }
       })
       .catch(() => {
         setError(true);
         setTitle("Error: the replay is not available.");
-        document.title = "BTF Brain";
+        document.title = "Nina";
       })
       .finally(() => {
         isLoading.current = false;

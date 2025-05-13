@@ -2,14 +2,14 @@
 
 ## Table of Contents
 
-- [Where's the name BTF Brain come from?](#wheres-the-name-BTF Brain-come-from)
+- [Where's the name Nina come from?](#wheres-the-name-Nina-come-from)
 
-- [Which models does BTF Brain support?](#which-models-does-BTF Brain-support)
+- [Which models does Nina support?](#which-models-does-Nina-support)
 
-## Where's the name BTF Brain come from?
+## Where's the name Nina come from?
 
-BTF Brain is short for **D**eep **E**xploration and **E**fficient **R**esearch **Flow**. It is named after the deer, which is a symbol of gentleness and elegance. We hope BTF Brain can bring a gentle and elegant deep research experience to you.
+Nina is short for **D**eep **E**xploration and **E**fficient **R**esearch **Flow**. It is named after the deer, which is a symbol of gentleness and elegance. We hope Nina can bring a gentle and elegant deep research experience to you.
 
-## Which models does BTF Brain support?
+## Which models does Nina support?
 
 Please refer to the [Configuration Guide](configuration_guide.md) for more details.

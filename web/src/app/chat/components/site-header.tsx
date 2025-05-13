@@ -7,14 +7,14 @@ import Link from "next/link";
 import { NumberTicker } from "~/components/magicui/number-ticker";
 import { Button } from "~/components/ui/button";
 import { env } from "~/env";
-
+// 头部导航代码
 export async function SiteHeader() {
   return (
     <header className="supports-backdrop-blur:bg-background/80 bg-background/40 sticky top-0 left-0 z-40 flex h-15 w-full flex-col items-center backdrop-blur-lg">
       <div className="container flex h-15 items-center justify-between px-3">
         <div className="text-xl font-medium">
-          <span className="mr-1 text-2xl">🦌</span>
-          <span>BTF Brain</span>
+          <span className="mr-1 text-2xl">🧠</span>
+          <span>Nina</span>
         </div>
         <div className="relative flex items-center">
           <div
@@ -24,7 +24,7 @@ export async function SiteHeader() {
               filter: "blur(32px)",
             }}
           />
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             asChild
@@ -36,7 +36,7 @@ export async function SiteHeader() {
               {env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY &&
                 env.GITHUB_OAUTH_TOKEN && <StarCounter />}
             </Link>
-          </Button>
+          </Button> */}
         </div>
       </div>
       <hr className="from-border/0 via-border/70 to-border/0 m-0 h-px w-full border-none bg-gradient-to-r" />

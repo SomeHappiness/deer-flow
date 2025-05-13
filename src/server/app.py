@@ -33,7 +33,7 @@ from src.tools import VolcengineTTS
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="BTF Brain API",
+    title="Nina API",
     description="API for Deer",
     version="0.1.0",
 )

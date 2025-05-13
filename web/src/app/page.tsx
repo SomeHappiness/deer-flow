@@ -17,12 +17,12 @@ export default function HomePage() {
       <SiteHeader />
       <main className="container flex flex-col items-center justify-center gap-56">
         <Jumbotron />
-        <CaseStudySection />
-        <MultiAgentSection />
-        <CoreFeatureSection />
-        <JoinCommunitySection />
+        {/* <CaseStudySection /> */}
+        {/* <MultiAgentSection /> */}
+        {/* <CoreFeatureSection /> */}
+        {/* <JoinCommunitySection /> */}
       </main>
-      <Footer />
+      {/* <Footer /> */}
       <Ray />
     </div>
   );
@@ -40,7 +40,7 @@ function Footer() {
       </div>
       <div className="text-muted-foreground container mb-8 flex flex-col items-center justify-center text-xs">
         <p>Licensed under MIT License</p>
-        <p>&copy; {year} BTF Brain</p>
+        <p>&copy; {year} Nina</p>
       </div>
     </footer>
   );

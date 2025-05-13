@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Entry point script for the BTF Brain project.
+Entry point script for the Nina project.
 """
 
 import argparse

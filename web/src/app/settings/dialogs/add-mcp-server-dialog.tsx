@@ -131,7 +131,7 @@ export function AddMCPServerDialog({
           <DialogTitle>Add New MCP Servers</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          BTF Brain uses the standard JSON MCP config to create a new server.
+          Nina uses the standard JSON MCP config to create a new server.
           <br />
           Paste your config below and click &quot;Add&quot; to add new servers.
         </DialogDescription>

@@ -169,13 +169,13 @@ export function InputBox({
           ref={textareaRef}
           className={cn(
             "m-0 w-full resize-none border-none px-4 py-3 text-lg",
-            size === "large" ? "min-h-32" : "min-h-4",
+            size === "large" ? "min-h-30" : "min-h-4",
           )}
           style={{ textIndent: feedback ? `${indent}px` : 0 }}
           placeholder={
             feedback
               ? `Describe how you ${feedback.option.text.toLocaleLowerCase()}?`
-              : "What can I do for you?"
+              : "嗨，需要帮忙么?"
           }
           value={message}
           onCompositionStart={() => setImeStatus("active")}
@@ -199,7 +199,7 @@ export function InputBox({
                   Investigation Mode: {backgroundInvestigation ? "On" : "Off"}
                 </h3>
                 <p>
-                  When enabled, BTF Brain will perform a quick search before
+                  When enabled, Nina will perform a quick search before
                   planning. This is useful for researches related to ongoing
                   events and news.
                 </p>

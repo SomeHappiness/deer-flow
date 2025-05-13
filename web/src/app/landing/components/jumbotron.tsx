@@ -46,16 +46,13 @@ export function Jumbotron() {
         {/* 主标题，渐变色+动态文字 */}
         <h1 className="text-center text-4xl font-bold md:text-6xl">
           <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-            Deep Research{" "}
+            The world in {" "}
           </span>
-          <AuroraText>at Your Fingertips</AuroraText>
+          <AuroraText> Your Fingertips</AuroraText>
         </h1>
         {/* 产品简介 */}
         <p className="max-w-4xl p-2 text-center text-sm opacity-85 md:text-2xl">
-          Meet BTF Brain, your personal Deep Research assistant. With powerful
-          tools like search engines, web crawlers, Python and MCP services, it
-          delivers instant insights, comprehensive reports, and even captivating
-          podcasts.
+          Hi I’m Nina, an omniscient AI assistant with encyclopedic knowledge spanning celestial phenomena to terrestrial affairs, and exceptional proficiency in leveraging tools to deliver flawless solutions.
         </p>
         {/* 行动按钮区 */}
         <div className="flex gap-6">
@@ -75,7 +72,7 @@ export function Jumbotron() {
             </Link>
           </Button>
           {/* GitHub 了解更多按钮，仅在非静态模式下显示 */}
-          {!env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
+          {/* {!env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
             <Button
               className="w-42 text-lg"
               size="lg"
@@ -90,13 +87,13 @@ export function Jumbotron() {
                 Learn More
               </Link>
             </Button>
-          )}
+          )} */}
         </div>
       </div>
       {/* 底部英文释义说明 */}
-      <div className="absolute bottom-8 flex text-xs opacity-50">
+      {/* <div className="absolute bottom-8 flex text-xs opacity-50">
         <p>* DEER stands for Deep Exploration and Efficient Research.</p>
-      </div>
+      </div> */}
     </section>
   );
 }

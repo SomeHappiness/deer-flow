@@ -84,7 +84,7 @@ export function CaseStudySection() {
       <SectionHeader
         anchor="case-studies"
         title="Case Studies"
-        description="See BTF Brain in action through replays."
+        description="See Nina in action through replays."
       />
       {/* 案例卡片网格 */}
       <div className="grid w-3/4 grid-cols-1 gap-2 sm:w-full sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

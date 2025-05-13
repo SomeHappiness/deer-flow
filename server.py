@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Server script for running the BTF Brain API.
+Server script for running the Nina API.
 """
 
 import argparse
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Run the BTF Brain API server")
+    parser = argparse.ArgumentParser(description="Run the Nina API server")
     parser.add_argument(
         "--reload",
         action="store_true",
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     if args.reload:
         reload = True
 
-    logger.info("Starting BTF Brain API server")
+    logger.info("Starting Nina API server")
     uvicorn.run(
         "src.server:app",
         host=args.host,
