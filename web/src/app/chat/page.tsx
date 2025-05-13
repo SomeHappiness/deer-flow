@@ -31,14 +31,14 @@ export default function HomePage() {
         <Logo />
         <div className="flex items-center">
           <Tooltip title="Star Nina on GitHub">
-            <Button variant="ghost" size="icon" asChild>
+            {/* <Button variant="ghost" size="icon" asChild>
               <Link
                 href="https://github.com/bytedance/deer-flow"
                 target="_blank"
               >
                 <GithubOutlined />
               </Link>
-            </Button>
+            </Button> */}
           </Tooltip>
           <ThemeToggle />
           <Suspense>
