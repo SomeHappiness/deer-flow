@@ -9,9 +9,16 @@ import { Button } from "~/components/ui/button";
 
 import { SectionHeader } from "../components/section-header";
 
+/**
+ * 加入社区区块组件
+ * 
+ * 鼓励用户加入DeerFlow社区，参与贡献和协作
+ * @returns {JSX.Element} 加入社区区块
+ */
 export function JoinCommunitySection() {
   return (
     <section className="flex w-full flex-col items-center justify-center pb-12">
+      {/* 区块标题，带渐变色AuroraText */}
       <SectionHeader
         anchor="join-community"
         title={
@@ -21,6 +28,7 @@ export function JoinCommunitySection() {
         }
         description="Contribute brilliant ideas to shape the future of DeerFlow. Collaborate, innovate, and make impacts."
       />
+      {/* GitHub贡献按钮 */}
       <Button className="text-xl" size="lg" asChild>
         <Link href="https://github.com/bytedance/deer-flow" target="_blank">
           <GithubFilled />

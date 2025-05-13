@@ -7,6 +7,10 @@ import { BentoCard, BentoGrid } from "~/components/magicui/bento-grid";
 
 import { SectionHeader } from "../components/section-header";
 
+/**
+ * 核心功能数据列表
+ * 每个对象代表一个功能，包含图标、名称、描述、链接等
+ */
 const features = [
   {
     Icon: Microscope,
@@ -70,14 +74,22 @@ const features = [
   },
 ];
 
+/**
+ * 核心功能区块组件
+ * 
+ * 展示DeerFlow的主要功能，用户可点击卡片了解更多
+ * @returns {JSX.Element} 核心功能区块
+ */
 export function CoreFeatureSection() {
   return (
     <section className="relative flex w-full flex-col content-around items-center justify-center">
+      {/* 区块标题 */}
       <SectionHeader
         anchor="core-features"
         title="Core Features"
         description="Find out what makes DeerFlow effective."
       />
+      {/* 功能卡片网格 */}
       <BentoGrid className="w-3/4 lg:grid-cols-2 lg:grid-rows-3">
         {features.map((feature) => (
           <BentoCard key={feature.name} {...feature} />

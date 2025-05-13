@@ -295,6 +295,27 @@ def research_team_node(
     return Command(goto="planner")
 
 
+def _truncate_content(content: str, max_length: int = 2000) -> str:
+    """截断内容以保持在令牌限制内
+    
+    Args:
+        content: 要截断的原始内容
+        max_length: 允许的最大字符数
+        
+    Returns:
+        截断后的内容，如果进行了截断，则添加说明
+    """
+    if len(content) <= max_length:
+        return content
+    
+    # 保留内容的前后部分，中间部分用摘要替换
+    front = content[:max_length // 2]
+    back = content[-max_length // 2:]
+    
+    truncation_message = f"\n\n[...内容已截断，总长度为{len(content)}字符...]\n\n"
+    return front + truncation_message + back
+
+
 async def _execute_agent_step(
     state: State, agent, agent_name: str
 ) -> Command[Literal["research_team"]]:
@@ -338,15 +359,23 @@ async def _execute_agent_step(
     step.execution_res = response_content
     logger.info(f"Step '{step.title}' execution completed by {agent_name}")
 
+    # 截断响应内容以避免超出令牌限制
+    truncated_response = _truncate_content(response_content, 3000)
+    
+    # 检查观察结果的总大小，如果太大则进行清理
+    if len(observations) > 5:
+        # 保留最近的观察结果
+        observations = observations[-5:]
+    
     return Command(
         update={
             "messages": [
                 HumanMessage(
-                    content=response_content,
+                    content=truncated_response,
                     name=agent_name,
                 )
             ],
-            "observations": observations + [response_content],
+            "observations": observations + [truncated_response],
         },
         goto="research_team",
     )
@@ -417,6 +446,14 @@ async def researcher_node(
 ) -> Command[Literal["research_team"]]:
     """Researcher node that do research"""
     logger.info("Researcher node is researching.")
+    
+    # 检查并限制状态中的观察结果数量
+    observations = state.get("observations", [])
+    if len(observations) > 5:
+        # 保留最新的5个观察结果
+        logger.info(f"Trimming observations from {len(observations)} to 5")
+        state["observations"] = observations[-5:]
+    
     return await _setup_and_execute_agent_step(
         state,
         config,

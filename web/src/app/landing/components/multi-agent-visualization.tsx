@@ -46,6 +46,16 @@ const nodeTypes = {
   default: AgentNode,
 };
 
+/**
+ * 多智能体可视化组件
+ * 
+ * 展示多智能体协作流程的可视化动画，支持自动播放、手动控制、全屏切换等功能。
+ * 使用ReactFlow实现节点和边的渲染。
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @returns {JSX.Element} 多智能体可视化组件
+ */
 export function MultiAgentVisualization({ className }: { className?: string }) {
   const {
     graph: { nodes, edges },
@@ -88,6 +98,7 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
       ref={containerRef}
       className={cn("flex h-full w-full flex-col pb-4", className)}
     >
+      {/* ReactFlow流程图区域 */}
       <ReactFlow
         className={cn("flex min-h-0 flex-grow")}
         style={{
@@ -107,10 +118,12 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
           flowRef.current = instance;
         }}
       >
+        {/* 背景渐变遮罩 */}
         <Background
           className="[mask-image:radial-gradient(800px_circle_at_center,white,transparent)]"
           bgColor="var(--background)"
         />
+        {/* 用于自动触发动画的锚点 */}
         <div
           ref={anchorRef}
           id="auto-run-animation-trigger"
@@ -118,13 +131,16 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
         />
       </ReactFlow>
       <div className="h-4 shrink-0"></div>
+      {/* 控制面板区域 */}
       <div className="flex h-6 w-full shrink-0 items-center justify-center">
         <div className="bg-muted/50 z-[200] flex rounded-3xl px-4 py-2">
+          {/* 上一步按钮 */}
           <Tooltip title="Move to the previous step">
             <Button variant="ghost" onClick={prevStep}>
               <ChevronLeft className="size-5" />
             </Button>
           </Tooltip>
+          {/* 播放/暂停按钮 */}
           <Tooltip title="Play / Pause">
             <Button variant="ghost" onClick={togglePlay}>
               {playing ? (
@@ -134,6 +150,7 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
               )}
             </Button>
           </Tooltip>
+          {/* 下一步按钮 */}
           <Tooltip title="Move to the next step">
             <Button
               variant="ghost"
@@ -145,6 +162,7 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
               <ChevronRight className="size-5" />
             </Button>
           </Tooltip>
+          {/* 步骤滑块 */}
           <div className="text-muted-foreground ml-2 flex items-center justify-center">
             <Slider
               className="w-120"
@@ -158,6 +176,7 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
               }}
             />
           </div>
+          {/* 全屏切换按钮 */}
           <Tooltip title="Toggle fullscreen">
             <Button
               variant="ghost"
@@ -180,9 +199,16 @@ export function MultiAgentVisualization({ className }: { className?: string }) {
   );
 }
 
+/**
+ * 圆形节点组件
+ * 
+ * 用于流程图中的起始和结束节点，支持高亮显示
+ * @param {object} data - 节点数据，包含label和active状态
+ */
 function CircleNode({ data }: { data: { label: string; active: boolean } }) {
   return (
     <>
+      {/* 激活时显示高亮边框 */}
       {data.active && (
         <ShineBorder
           className="rounded-full"
@@ -192,6 +218,7 @@ function CircleNode({ data }: { data: { label: string; active: boolean } }) {
       <div className="flex h-10 w-10 items-center justify-center rounded-full border bg-[var(--xy-node-background-color-default)]">
         <p className="text-xs">{data.label}</p>
       </div>
+      {/* 起始和结束节点的连接句柄 */}
       {data.label === "Start" && (
         <Handle
           className="invisible"
@@ -212,6 +239,13 @@ function CircleNode({ data }: { data: { label: string; active: boolean } }) {
   );
 }
 
+/**
+ * 智能体节点组件
+ * 
+ * 用于流程图中的智能体节点，支持高亮、图标、步骤描述等
+ * @param {object} data - 节点数据，包含icon、label、active、stepDescription等
+ * @param {string} id - 节点ID
+ */
 function AgentNode({
   data,
   id,
@@ -227,12 +261,14 @@ function AgentNode({
 }) {
   return (
     <>
+      {/* 激活时显示高亮边框 */}
       {data.active && (
         <ShineBorder
           shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
           className="rounded-[2px]"
         />
       )}
+      {/* 步骤描述气泡提示 */}
       <Tooltip
         className="max-w-50 text-[15px] font-light opacity-70"
         style={{
@@ -254,6 +290,7 @@ function AgentNode({
           </div>
         </div>
       </Tooltip>
+      {/* 多方向连接句柄 */}
       <Handle
         className="invisible"
         type="source"

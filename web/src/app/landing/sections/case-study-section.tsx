@@ -8,6 +8,10 @@ import { BentoCard } from "~/components/magicui/bento-grid";
 
 import { SectionHeader } from "../components/section-header";
 
+/**
+ * 案例研究数据列表
+ * 每个对象代表一个案例，包含id、图标、标题和描述
+ */
 const caseStudies = [
   {
     id: "eiffel-tower-vs-tallest-building",
@@ -67,17 +71,26 @@ const caseStudies = [
   },
 ];
 
+/**
+ * 案例研究区块组件
+ * 
+ * 展示多个典型案例，用户可点击卡片跳转到对应的回放页面
+ * @returns {JSX.Element} 案例研究区块
+ */
 export function CaseStudySection() {
   return (
     <section className="relative container hidden flex-col items-center justify-center md:flex">
+      {/* 区块标题 */}
       <SectionHeader
         anchor="case-studies"
         title="Case Studies"
         description="See DeerFlow in action through replays."
       />
+      {/* 案例卡片网格 */}
       <div className="grid w-3/4 grid-cols-1 gap-2 sm:w-full sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {caseStudies.map((caseStudy) => (
           <div key={caseStudy.title} className="w-full p-2">
+            {/* 单个案例卡片，点击可跳转回放 */}
             <BentoCard
               {...{
                 Icon: caseStudy.icon,

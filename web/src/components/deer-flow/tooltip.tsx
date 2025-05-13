@@ -11,6 +11,23 @@ import {
 } from "~/components/ui/tooltip";
 import { cn } from "~/lib/utils";
 
+/**
+ * 提示框组件
+ * 
+ * 在用户与元素交互时显示额外信息的工具提示组件
+ * 基于Shadcn UI库的Tooltip组件进行二次封装
+ * 支持自定义样式、位置和内容
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {CSSProperties} [props.style] - 内联样式对象
+ * @param {React.ReactNode} props.children - 要添加提示的子元素
+ * @param {React.ReactNode} [props.title] - 提示内容
+ * @param {boolean} [props.open] - 控制提示框是否显示
+ * @param {string} [props.side] - 提示显示的位置：'left'|'right'|'top'|'bottom'
+ * @param {number} [props.sideOffset] - 提示框偏移距离
+ * @returns {JSX.Element} Tooltip组件
+ */
 export function Tooltip({
   className,
   style,
@@ -28,19 +45,34 @@ export function Tooltip({
   side?: "left" | "right" | "top" | "bottom";
   sideOffset?: number;
 }) {
+  // 不直接传递 open 属性，而是使用条件渲染
   return (
     <TooltipProvider>
-      <ShadcnTooltip delayDuration={750} open={open}>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent
-          className={cn(className)}
-          style={style}
-          side={side}
-          sideOffset={sideOffset}
-        >
-          {title}
-        </TooltipContent>
-      </ShadcnTooltip>
+      {open !== undefined ? (
+        <ShadcnTooltip delayDuration={750} defaultOpen={open}>
+          <TooltipTrigger asChild>{children}</TooltipTrigger>
+          <TooltipContent
+            className={cn(className)}
+            style={style}
+            side={side}
+            sideOffset={sideOffset}
+          >
+            {title}
+          </TooltipContent>
+        </ShadcnTooltip>
+      ) : (
+        <ShadcnTooltip delayDuration={750}>
+          <TooltipTrigger asChild>{children}</TooltipTrigger>
+          <TooltipContent
+            className={cn(className)}
+            style={style}
+            side={side}
+            sideOffset={sideOffset}
+          >
+            {title}
+          </TooltipContent>
+        </ShadcnTooltip>
+      )}
     </TooltipProvider>
   );
 }

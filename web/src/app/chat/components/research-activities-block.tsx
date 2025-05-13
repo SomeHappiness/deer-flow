@@ -30,6 +30,17 @@ import { useMessage, useStore } from "~/core/store";
 import { parseJSON } from "~/core/utils";
 import { cn } from "~/lib/utils";
 
+/**
+ * 研究活动区块组件
+ * 
+ * 显示研究过程中的活动历史记录
+ * 包括消息内容和工具调用结果
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {string} props.researchId - 研究ID，用于获取相关活动
+ * @returns {JSX.Element} 研究活动区块组件
+ */
 export function ResearchActivitiesBlock({
   className,
   researchId,
@@ -37,12 +48,17 @@ export function ResearchActivitiesBlock({
   className?: string;
   researchId: string;
 }) {
+  // 获取活动ID列表
   const activityIds = useStore((state) =>
     state.researchActivityIds.get(researchId),
   )!;
+  
+  // 检查研究是否仍在进行中
   const ongoing = useStore((state) => state.ongoingResearchId === researchId);
+  
   return (
     <>
+      {/* 活动列表 */}
       <ul className={cn("flex flex-col py-4", className)}>
         {activityIds.map(
           (activityId, i) =>
@@ -64,11 +80,23 @@ export function ResearchActivitiesBlock({
             ),
         )}
       </ul>
+      
+      {/* 研究进行中显示加载动画 */}
       {ongoing && <LoadingAnimation className="mx-4 my-12" />}
     </>
   );
 }
 
+/**
+ * 活动消息组件
+ * 
+ * 显示活动相关的文本消息内容
+ * 过滤掉reporter和planner角色的消息
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} props.messageId - 消息ID
+ * @returns {JSX.Element|null} 活动消息组件或null
+ */
 function ActivityMessage({ messageId }: { messageId: string }) {
   const message = useMessage(messageId);
   if (message?.agent && message.content) {
@@ -83,6 +111,16 @@ function ActivityMessage({ messageId }: { messageId: string }) {
   return null;
 }
 
+/**
+ * 活动列表项组件
+ * 
+ * 根据消息中的工具调用类型渲染不同的子组件
+ * 支持网络搜索、网页爬取、Python代码执行和通用MCP工具
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} props.messageId - 消息ID
+ * @returns {JSX.Element|null} 对应类型的工具调用组件或null
+ */
 function ActivityListItem({ messageId }: { messageId: string }) {
   const message = useMessage(messageId);
   if (message) {
@@ -103,7 +141,15 @@ function ActivityListItem({ messageId }: { messageId: string }) {
   return null;
 }
 
+// 页面缓存，用于存储已访问页面的标题
 const __pageCache = new LRUCache<string, string>({ max: 100 });
+
+/**
+ * 搜索结果类型定义
+ * 
+ * 页面类型：包含标题、URL和内容
+ * 图片类型：包含图片URL和描述
+ */
 type SearchResult =
   | {
       type: "page";
@@ -116,10 +162,24 @@ type SearchResult =
       image_url: string;
       image_description: string;
     };
+
+/**
+ * 网络搜索工具调用组件
+ * 
+ * 显示网络搜索的结果，包括网页和图片结果
+ * 支持加载状态和动画效果
+ * 
+ * @param {object} props - 组件属性
+ * @param {ToolCallRuntime} props.toolCall - 工具调用运行时对象
+ * @returns {JSX.Element} 搜索结果显示组件
+ */
 function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
+  // 检查是否正在搜索中
   const searching = useMemo(() => {
     return toolCall.result === undefined;
   }, [toolCall.result]);
+  
+  // 解析搜索结果JSON
   const searchResults = useMemo<SearchResult[]>(() => {
     let results: SearchResult[] | undefined = undefined;
     try {
@@ -128,6 +188,7 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
       results = undefined;
     }
     if (Array.isArray(results)) {
+      // 将页面标题存入缓存
       results.forEach((result) => {
         if (result.type === "page") {
           __pageCache.set(result.url, result.title);
@@ -138,6 +199,8 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
     }
     return results;
   }, [toolCall.result]);
+  
+  // 分离页面和图片结果
   const pageResults = useMemo(
     () => searchResults?.filter((result) => result.type === "page"),
     [searchResults],
@@ -146,8 +209,10 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
     () => searchResults?.filter((result) => result.type === "image"),
     [searchResults],
   );
+  
   return (
     <section className="mt-4 pl-4">
+      {/* 搜索查询显示 */}
       <div className="font-medium italic">
         <RainbowText
           className="flex items-center"
@@ -160,9 +225,12 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
           </span>
         </RainbowText>
       </div>
+      
+      {/* 搜索结果区域 */}
       <div className="pr-4">
         {pageResults && (
           <ul className="mt-2 flex flex-wrap gap-4">
+            {/* 加载中显示骨架屏 */}
             {searching &&
               [...Array(6)].map((_, i) => (
                 <li
@@ -175,6 +243,8 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
                   />
                 </li>
               ))}
+              
+            {/* 网页结果列表 */}
             {pageResults
               .filter((result) => result.type === "page")
               .map((searchResult, i) => (
@@ -199,6 +269,8 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
                   </a>
                 </motion.li>
               ))}
+              
+            {/* 图片结果列表 */}
             {imageResults.map((searchResult, i) => (
               <motion.li
                 key={`search-result-${i}`}
@@ -232,12 +304,26 @@ function WebSearchToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
   );
 }
 
+/**
+ * 网页爬取工具调用组件
+ * 
+ * 显示爬取的网页信息，包括URL和网站图标
+ * 使用页面缓存获取页面标题
+ * 
+ * @param {object} props - 组件属性
+ * @param {ToolCallRuntime} props.toolCall - 工具调用运行时对象
+ * @returns {JSX.Element} 网页爬取结果组件
+ */
 function CrawlToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
+  // 获取爬取的URL
   const url = useMemo(
     () => (toolCall.args as { url: string }).url,
     [toolCall.args],
   );
+  
+  // 从缓存中获取页面标题
   const title = useMemo(() => __pageCache.get(url), [url]);
+  
   return (
     <section className="mt-4 pl-4">
       <div>
@@ -273,11 +359,25 @@ function CrawlToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
   );
 }
 
+/**
+ * Python代码执行工具调用组件
+ * 
+ * 显示执行的Python代码及其结果
+ * 支持代码语法高亮，会根据主题自动切换样式
+ * 
+ * @param {object} props - 组件属性
+ * @param {ToolCallRuntime} props.toolCall - 工具调用运行时对象
+ * @returns {JSX.Element} Python代码执行组件
+ */
 function PythonToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
+  // 获取Python代码内容
   const code = useMemo<string>(() => {
     return (toolCall.args as { code: string }).code;
   }, [toolCall.args]);
+  
+  // 根据当前主题选择语法高亮样式
   const { resolvedTheme } = useTheme();
+  
   return (
     <section className="mt-4 pl-4">
       <div className="flex items-center">
@@ -308,9 +408,23 @@ function PythonToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
   );
 }
 
+/**
+ * 通用MCP工具调用组件
+ * 
+ * 显示各种MCP工具的调用信息
+ * 支持折叠/展开结果，包含工具描述提示
+ * 
+ * @param {object} props - 组件属性
+ * @param {ToolCallRuntime} props.toolCall - 工具调用运行时对象
+ * @returns {JSX.Element} MCP工具调用组件
+ */
 function MCPToolCall({ toolCall }: { toolCall: ToolCallRuntime }) {
+  // 查找工具定义信息
   const tool = useMemo(() => findMCPTool(toolCall.name), [toolCall.name]);
+  
+  // 根据当前主题选择语法高亮样式
   const { resolvedTheme } = useTheme();
+  
   return (
     <section className="mt-4 pl-4">
       <div className="w-fit overflow-y-auto rounded-md py-0">

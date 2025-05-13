@@ -14,23 +14,35 @@ import { getChatStreamSettings } from "./settings-store";
 
 const THREAD_ID = nanoid();
 
+/**
+ * 全局状态管理Store
+ * 
+ * 使用Zustand管理应用全局状态，包括消息、研究、计划等
+ * 提供各种操作方法用于状态更新
+ */
 export const useStore = create<{
-  responding: boolean;
-  threadId: string | undefined;
-  messageIds: string[];
-  messages: Map<string, Message>;
-  researchIds: string[];
-  researchPlanIds: Map<string, string>;
-  researchReportIds: Map<string, string>;
-  researchActivityIds: Map<string, string[]>;
-  ongoingResearchId: string | null;
-  openResearchId: string | null;
+  responding: boolean;               // 当前是否正在响应用户请求
+  threadId: string | undefined;      // 当前会话ID
+  messageIds: string[];              // 所有消息ID数组，按时间顺序
+  messages: Map<string, Message>;    // 消息ID到消息对象的映射
+  researchIds: string[];             // 所有研究ID数组
+  researchPlanIds: Map<string, string>; // 研究ID到计划ID的映射
+  researchReportIds: Map<string, string>; // 研究ID到报告ID的映射
+  researchActivityIds: Map<string, string[]>; // 研究ID到活动消息ID数组的映射
+  ongoingResearchId: string | null;  // 当前正在进行的研究ID
+  openResearchId: string | null;     // 当前打开的研究ID
 
+  // 添加一条新消息
   appendMessage: (message: Message) => void;
+  // 更新单条消息
   updateMessage: (message: Message) => void;
+  // 批量更新多条消息
   updateMessages: (messages: Message[]) => void;
+  // 打开一个研究
   openResearch: (researchId: string | null) => void;
+  // 关闭当前研究
   closeResearch: () => void;
+  // 设置当前进行中的研究
   setOngoingResearch: (researchId: string | null) => void;
 }>((set) => ({
   responding: false,
@@ -44,17 +56,31 @@ export const useStore = create<{
   ongoingResearchId: null,
   openResearchId: null,
 
+  /**
+   * 添加一条新消息到状态中
+   * @param message 要添加的消息对象
+   */
   appendMessage(message: Message) {
     set((state) => ({
       messageIds: [...state.messageIds, message.id],
       messages: new Map(state.messages).set(message.id, message),
     }));
   },
+  
+  /**
+   * 更新已有消息
+   * @param message 更新后的消息对象
+   */
   updateMessage(message: Message) {
     set((state) => ({
       messages: new Map(state.messages).set(message.id, message),
     }));
   },
+  
+  /**
+   * 批量更新多条消息
+   * @param messages 要更新的消息对象数组
+   */
   updateMessages(messages: Message[]) {
     set((state) => {
       const newMessages = new Map(state.messages);
@@ -62,17 +88,41 @@ export const useStore = create<{
       return { messages: newMessages };
     });
   },
+  
+  /**
+   * 打开指定研究
+   * @param researchId 要打开的研究ID
+   */
   openResearch(researchId: string | null) {
     set({ openResearchId: researchId });
   },
+  
+  /**
+   * 关闭当前研究
+   */
   closeResearch() {
     set({ openResearchId: null });
   },
+  
+  /**
+   * 设置当前进行中的研究
+   * @param researchId 研究ID
+   */
   setOngoingResearch(researchId: string | null) {
     set({ ongoingResearchId: researchId });
   },
 }));
 
+/**
+ * 发送消息并处理响应
+ * 
+ * 将用户消息添加到状态并发起流式请求
+ * 处理流式响应并更新状态
+ * 
+ * @param content 消息内容
+ * @param options 选项，如中断反馈
+ * @param abortOptions 中止选项
+ */
 export async function sendMessage(
   content?: string,
   {
@@ -153,18 +203,37 @@ export async function sendMessage(
   }
 }
 
+/**
+ * 设置响应状态
+ * @param value 是否正在响应
+ */
 function setResponding(value: boolean) {
   useStore.setState({ responding: value });
 }
 
+/**
+ * 检查消息是否存在
+ * @param id 消息ID
+ * @returns 是否存在
+ */
 function existsMessage(id: string) {
   return useStore.getState().messageIds.includes(id);
 }
 
+/**
+ * 根据ID获取消息
+ * @param id 消息ID
+ * @returns 消息对象
+ */
 function getMessage(id: string) {
   return useStore.getState().messages.get(id);
 }
 
+/**
+ * 根据工具调用ID查找消息
+ * @param toolCallId 工具调用ID
+ * @returns 包含该工具调用的消息
+ */
 function findMessageByToolCallId(toolCallId: string) {
   return Array.from(useStore.getState().messages.values())
     .reverse()
@@ -176,6 +245,10 @@ function findMessageByToolCallId(toolCallId: string) {
     });
 }
 
+/**
+ * 添加消息并处理研究相关逻辑
+ * @param message 要添加的消息
+ */
 function appendMessage(message: Message) {
   if (
     message.agent === "coder" ||
@@ -192,6 +265,10 @@ function appendMessage(message: Message) {
   useStore.getState().appendMessage(message);
 }
 
+/**
+ * 更新消息并处理研究状态变化
+ * @param message 更新后的消息
+ */
 function updateMessage(message: Message) {
   if (
     getOngoingResearchId() &&
@@ -203,10 +280,18 @@ function updateMessage(message: Message) {
   useStore.getState().updateMessage(message);
 }
 
+/**
+ * 获取当前进行中的研究ID
+ * @returns 研究ID
+ */
 function getOngoingResearchId() {
   return useStore.getState().ongoingResearchId;
 }
 
+/**
+ * 添加新研究记录到状态
+ * @param researchId 研究ID
+ */
 function appendResearch(researchId: string) {
   let planMessage: Message | undefined;
   const reversedMessageIds = [...useStore.getState().messageIds].reverse();
@@ -233,6 +318,10 @@ function appendResearch(researchId: string) {
   });
 }
 
+/**
+ * 添加研究活动消息
+ * @param message 活动消息
+ */
 function appendResearchActivity(message: Message) {
   const researchId = getOngoingResearchId();
   if (researchId) {

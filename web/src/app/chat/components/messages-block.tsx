@@ -26,14 +26,43 @@ import { InputBox } from "./input-box";
 import { MessageListView } from "./message-list-view";
 import { Welcome } from "./welcome";
 
+/**
+ * 消息区块组件
+ * 
+ * 主要消息显示和交互区域，包含消息列表和输入框
+ * 支持普通对话模式和回放模式
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @returns {JSX.Element} 消息区块组件
+ */
 export function MessagesBlock({ className }: { className?: string }) {
+  // 获取消息数量和响应状态
   const messageCount = useStore((state) => state.messageIds.length);
   const responding = useStore((state) => state.responding);
+  
+  // 获取回放状态和元数据
   const { isReplay } = useReplay();
   const { title: replayTitle, hasError: replayHasError } = useReplayMetadata();
+  
+  // 回放控制状态
   const [replayStarted, setReplayStarted] = useState(false);
+  
+  // 用于中止请求的控制器
   const abortControllerRef = useRef<AbortController | null>(null);
+  
+  // 反馈状态管理
   const [feedback, setFeedback] = useState<{ option: Option } | null>(null);
+
+  /**
+   * 处理发送消息
+   * 
+   * 创建中止控制器并发送消息
+   * 支持处理反馈和中断功能
+   * 
+   * @param {string} message - 消息内容
+   * @param {object} options - 选项对象
+   */
   const handleSend = useCallback(
     async (message: string, options?: { interruptFeedback?: string }) => {
       const abortController = new AbortController();
@@ -53,36 +82,73 @@ export function MessagesBlock({ className }: { className?: string }) {
     },
     [feedback],
   );
+  
+  /**
+   * 处理取消响应
+   * 
+   * 中止当前进行中的请求
+   */
   const handleCancel = useCallback(() => {
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
   }, []);
+  
+  /**
+   * 处理反馈选择
+   * 
+   * 设置用户选择的反馈选项
+   * 
+   * @param {object} feedback - 反馈对象
+   */
   const handleFeedback = useCallback(
     (feedback: { option: Option }) => {
       setFeedback(feedback);
     },
     [setFeedback],
   );
+  
+  /**
+   * 处理移除反馈
+   * 
+   * 清除当前反馈状态
+   */
   const handleRemoveFeedback = useCallback(() => {
     setFeedback(null);
   }, [setFeedback]);
+  
+  /**
+   * 处理开始回放
+   * 
+   * 设置回放状态并发送空消息开始回放
+   */
   const handleStartReplay = useCallback(() => {
     setReplayStarted(true);
     void sendMessage();
   }, [setReplayStarted]);
+  
+  /**
+   * 处理快进回放
+   * 
+   * 切换快进状态并调用API快进回放
+   */
   const [fastForwarding, setFastForwarding] = useState(false);
   const handleFastForwardReplay = useCallback(() => {
     setFastForwarding(!fastForwarding);
     fastForwardReplay(!fastForwarding);
   }, [fastForwarding]);
+  
   return (
     <div className={cn("flex h-full flex-col", className)}>
+      {/* 消息列表部分 */}
       <MessageListView
         className="flex flex-grow"
         onFeedback={handleFeedback}
         onSendMessage={handleSend}
       />
+      
+      {/* 根据模式显示不同的底部区域 */}
       {!isReplay ? (
+        // 常规模式：显示输入框和对话启动器
         <div className="relative flex h-42 shrink-0 pb-4">
           {!responding && messageCount === 0 && (
             <ConversationStarter
@@ -100,6 +166,7 @@ export function MessagesBlock({ className }: { className?: string }) {
           />
         </div>
       ) : (
+        // 回放模式：显示回放控制界面
         <>
           <div
             className={cn(
@@ -162,6 +229,7 @@ export function MessagesBlock({ className }: { className?: string }) {
                 )}
               </div>
             </Card>
+            {/* 静态网站演示模式提示 */}
             {!replayStarted && env.NEXT_PUBLIC_STATIC_WEBSITE_ONLY && (
               <div className="text-muted-foreground w-full text-center text-xs">
                 * This site is for demo purposes only. If you want to try your

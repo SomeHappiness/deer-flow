@@ -31,6 +31,18 @@ import {
 import { parseJSON } from "~/core/utils";
 import { cn } from "~/lib/utils";
 
+/**
+ * 消息列表视图组件
+ * 
+ * 显示对话中的消息列表，包括用户消息、助手回复、计划卡片等
+ * 支持自动滚动和消息反馈功能
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {function} [props.onFeedback] - 处理反馈的回调函数
+ * @param {function} [props.onSendMessage] - 发送消息的回调函数
+ * @returns {JSX.Element} 消息列表视图组件
+ */
 export function MessageListView({
   className,
   onFeedback,
@@ -43,8 +55,13 @@ export function MessageListView({
     options?: { interruptFeedback?: string },
   ) => void;
 }) {
+  // 滚动容器引用
   const scrollContainerRef = useRef<ScrollContainerRef>(null);
+  
+  // 获取消息列表
   const messageIds = useStore((state) => state.messageIds);
+  
+  // 检查中断消息
   const interruptMessage = useStore((state) => {
     if (messageIds.length >= 2) {
       const lastMessage = state.messages.get(
@@ -54,6 +71,8 @@ export function MessageListView({
     }
     return null;
   });
+  
+  // 等待反馈的消息ID
   const waitingForFeedbackMessageId = useStore((state) => {
     if (messageIds.length >= 2) {
       const lastMessage = state.messages.get(
@@ -65,6 +84,8 @@ export function MessageListView({
     }
     return null;
   });
+  
+  // 响应状态和研究状态
   const responding = useStore((state) => state.responding);
   const noOngoingResearch = useStore(
     (state) => state.ongoingResearchId === null,
@@ -73,6 +94,12 @@ export function MessageListView({
     (state) => state.ongoingResearchId === state.openResearchId,
   );
 
+  /**
+   * 处理切换研究状态
+   * 
+   * 解决切换研究时自动滚动到底部偶尔失败的问题
+   * 通过延时确保滚动容器已更新
+   */
   const handleToggleResearch = useCallback(() => {
     // Fix the issue where auto-scrolling to the bottom
     // occasionally fails when toggling research.
@@ -91,6 +118,7 @@ export function MessageListView({
       autoScrollToBottom
       ref={scrollContainerRef}
     >
+      {/* 消息列表 */}
       <ul className="flex flex-col">
         {messageIds.map((messageId) => (
           <MessageListItem
@@ -105,6 +133,8 @@ export function MessageListView({
         ))}
         <div className="flex h-8 w-full shrink-0"></div>
       </ul>
+      
+      {/* 加载动画 */}
       {responding && (noOngoingResearch || !ongoingResearchIsOpen) && (
         <LoadingAnimation className="ml-4" />
       )}
@@ -112,6 +142,22 @@ export function MessageListView({
   );
 }
 
+/**
+ * 消息列表项组件
+ * 
+ * 根据消息类型渲染不同的消息界面
+ * 支持用户消息、计划卡片、播客卡片和研究卡片
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {string} props.messageId - 消息ID
+ * @param {boolean} [props.waitForFeedback] - 是否等待反馈
+ * @param {Message|null} [props.interruptMessage] - 中断消息
+ * @param {function} [props.onFeedback] - 处理反馈的回调函数
+ * @param {function} [props.onSendMessage] - 发送消息的回调函数
+ * @param {function} [props.onToggleResearch] - 切换研究状态的回调函数
+ * @returns {JSX.Element|null} 消息列表项组件
+ */
 function MessageListItem({
   className,
   messageId,
@@ -207,6 +253,18 @@ function MessageListItem({
     return null;
   }
 
+  /**
+   * 消息气泡组件
+   * 
+   * 根据消息角色显示不同样式的气泡
+   * 用户消息显示右侧，助手消息显示左侧
+   * 
+   * @param {object} props - 组件属性 
+   * @param {string} [props.className] - 自定义CSS类名
+   * @param {Message} props.message - 消息对象
+   * @param {React.ReactNode} props.children - 子元素
+   * @returns {JSX.Element} 消息气泡组件
+   */
   function MessageBubble({
     className,
     message,
@@ -231,6 +289,18 @@ function MessageListItem({
     );
   }
 
+  /**
+   * 研究卡片组件
+   * 
+   * 显示研究信息，包括标题和状态
+   * 支持打开/关闭研究的功能
+   * 
+   * @param {object} props - 组件属性
+   * @param {string} [props.className] - 自定义CSS类名
+   * @param {string} props.researchId - 研究ID
+   * @param {function} [props.onToggleResearch] - 切换研究状态的回调函数
+   * @returns {JSX.Element} 研究卡片组件
+   */
   function ResearchCard({
     className,
     researchId,
@@ -240,6 +310,7 @@ function MessageListItem({
     researchId: string;
     onToggleResearch?: () => void;
   }) {
+    // 获取报告相关信息
     const reportId = useStore((state) =>
       state.researchReportIds.get(researchId),
     );
@@ -250,13 +321,22 @@ function MessageListItem({
       (state) => hasReport && state.messages.get(reportId!)!.isStreaming,
     );
     const openResearchId = useStore((state) => state.openResearchId);
+    
+    // 计算研究状态文本
     const state = useMemo(() => {
       if (hasReport) {
         return reportGenerating ? "Generating report..." : "Report generated";
       }
       return "Researching...";
     }, [hasReport, reportGenerating]);
+    
+    // 获取研究标题
     const title = useResearchTitle(researchId);
+    
+    /**
+     * 处理打开/关闭研究
+     * 根据当前状态切换研究的显示状态
+     */
     const handleOpen = useCallback(() => {
       if (openResearchId === researchId) {
         closeResearch();
@@ -265,6 +345,7 @@ function MessageListItem({
       }
       onToggleResearch?.();
     }, [openResearchId, researchId, onToggleResearch]);
+    
     return (
       <Card className={cn("w-full", className)}>
         <CardHeader>
@@ -292,7 +373,24 @@ function MessageListItem({
   }
 }
 
+// 用于计划接受反馈的问候语列表
 const GREETINGS = ["Cool", "Sounds great", "Looks good", "Great", "Awesome"];
+
+/**
+ * 计划卡片组件
+ * 
+ * 显示研究计划内容，包括标题、思考和步骤
+ * 支持用户反馈和接受/拒绝计划功能
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {Message} props.message - 消息对象
+ * @param {Message|null} [props.interruptMessage] - 中断消息
+ * @param {function} [props.onFeedback] - 处理反馈的回调函数
+ * @param {function} [props.onSendMessage] - 发送消息的回调函数
+ * @param {boolean} [props.waitForFeedback] - 是否等待反馈
+ * @returns {JSX.Element} 计划卡片组件
+ */
 function PlanCard({
   className,
   message,
@@ -311,6 +409,7 @@ function PlanCard({
   ) => void;
   waitForFeedback?: boolean;
 }) {
+  // 解析计划内容
   const plan = useMemo<{
     title?: string;
     thought?: string;
@@ -318,6 +417,11 @@ function PlanCard({
   }>(() => {
     return parseJSON(message.content ?? "", {});
   }, [message.content]);
+  
+  /**
+   * 处理接受计划
+   * 使用随机问候语作为确认回复
+   */
   const handleAccept = useCallback(async () => {
     if (onSendMessage) {
       onSendMessage(
@@ -328,6 +432,7 @@ function PlanCard({
       );
     }
   }, [onSendMessage]);
+  
   return (
     <Card className={cn("w-full", className)}>
       <CardHeader>
@@ -392,6 +497,17 @@ function PlanCard({
   );
 }
 
+/**
+ * 播客卡片组件
+ * 
+ * 显示生成的播客内容，包括标题和音频播放器
+ * 支持下载播客和播放状态管理
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {Message} props.message - 消息对象
+ * @returns {JSX.Element} 播客卡片组件
+ */
 function PodcastCard({
   className,
   message,
@@ -399,15 +515,23 @@ function PodcastCard({
   className?: string;
   message: Message;
 }) {
+  // 解析播客数据
   const data = useMemo(() => {
     return JSON.parse(message.content ?? "");
   }, [message.content]);
+  
+  // 获取标题和音频URL
   const title = useMemo<string | undefined>(() => data?.title, [data]);
   const audioUrl = useMemo<string | undefined>(() => data?.audioUrl, [data]);
+  
+  // 检查是否正在生成
   const isGenerating = useMemo(() => {
     return message.isStreaming;
   }, [message.isStreaming]);
+  
+  // 播放状态管理
   const [isPlaying, setIsPlaying] = useState(false);
+  
   return (
     <Card className={cn("w-[508px]", className)}>
       <CardHeader>

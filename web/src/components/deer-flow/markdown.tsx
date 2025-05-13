@@ -18,6 +18,21 @@ import { cn } from "~/lib/utils";
 import Image from "./image";
 import { Tooltip } from "./tooltip";
 
+/**
+ * Markdown渲染组件
+ * 
+ * 用于渲染Markdown格式的文本内容
+ * 支持GFM(GitHub Flavored Markdown)和数学公式
+ * 可选择性地启用复制功能和动画效果
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {string|null} props.children - Markdown格式的文本内容
+ * @param {React.CSSProperties} [props.style] - 内联样式对象
+ * @param {boolean} [props.enableCopy=false] - 是否启用复制功能
+ * @param {boolean} [props.animate=false] - 是否启用动画效果
+ * @returns {JSX.Element} Markdown渲染组件
+ */
 export function Markdown({
   className,
   children,
@@ -31,12 +46,17 @@ export function Markdown({
   style?: React.CSSProperties;
   animate?: boolean;
 }) {
-  const rehypePlugins = useMemo(() => {
-    if (animate) {
-      return [rehypeKatex, rehypeSplitWordsIntoSpans];
-    }
-    return [rehypeKatex];
-  }, [animate]);
+  // 使用静态数组避免无限渲染循环
+  const rehypePluginsWithAnimate = useMemo(() => [rehypeKatex, rehypeSplitWordsIntoSpans], []);
+  const rehypePluginsWithoutAnimate = useMemo(() => [rehypeKatex], []);
+  
+  const currentRehypePlugins = animate ? rehypePluginsWithAnimate : rehypePluginsWithoutAnimate;
+  
+  // 提前处理Markdown内容，避免重复计算
+  const processedContent = useMemo(() => {
+    return dropMarkdownQuote(processKatexInMarkdown(children));
+  }, [children]);
+  
   return (
     <div
       className={cn(
@@ -47,7 +67,7 @@ export function Markdown({
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={rehypePlugins}
+        rehypePlugins={currentRehypePlugins}
         components={{
           a: ({ href, children }) => (
             <a href={href} target="_blank" rel="noopener noreferrer">
@@ -62,7 +82,7 @@ export function Markdown({
         }}
         {...props}
       >
-        {dropMarkdownQuote(processKatexInMarkdown(children))}
+        {processedContent}
       </ReactMarkdown>
       {enableCopy && typeof children === "string" && (
         <div className="flex">
@@ -73,6 +93,16 @@ export function Markdown({
   );
 }
 
+/**
+ * 复制按钮组件
+ * 
+ * 用于提供一键复制Markdown内容的功能
+ * 点击后会显示复制成功的视觉反馈
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} props.content - 要复制的文本内容
+ * @returns {JSX.Element} 复制按钮组件
+ */
 function CopyButton({ content }: { content: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -103,6 +133,14 @@ function CopyButton({ content }: { content: string }) {
   );
 }
 
+/**
+ * 处理Markdown中的KaTeX数学公式
+ * 
+ * 将各种KaTeX语法转换为标准格式以便正确渲染
+ * 
+ * @param {string|null|undefined} markdown - 输入的Markdown文本
+ * @returns {string|null|undefined} 处理后的Markdown文本
+ */
 function processKatexInMarkdown(markdown?: string | null) {
   if (!markdown) return markdown;
 
@@ -118,6 +156,14 @@ function processKatexInMarkdown(markdown?: string | null) {
   return markdownWithKatexSyntax;
 }
 
+/**
+ * 删除Markdown中的代码块标记
+ * 
+ * 移除不必要的代码块标记，保留代码内容
+ * 
+ * @param {string|null|undefined} markdown - 输入的Markdown文本
+ * @returns {string|null|undefined} 处理后的Markdown文本
+ */
 function dropMarkdownQuote(markdown?: string | null) {
   if (!markdown) return markdown;
   return markdown
