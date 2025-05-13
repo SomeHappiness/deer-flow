@@ -1,4 +1,4 @@
-# 🦌 DeerFlow
+# 🦌 BTF Brain
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -7,9 +7,9 @@
 
 > オープンソースから生まれ、オープンソースに還元する。
 
-**DeerFlow**（**D**eep **E**xploration and **E**fficient **R**esearch **Flow**）は、オープンソースコミュニティの素晴らしい成果の上に構築されたコミュニティ主導の深層研究フレームワークです。私たちの目標は、言語モデルとウェブ検索、クローリング、Pythonコード実行などの専門ツールを組み合わせながら、これを可能にしたコミュニティに貢献することです。
+**BTF Brain**（**D**eep **E**xploration and **E**fficient **R**esearch **Flow**）は、オープンソースコミュニティの素晴らしい成果の上に構築されたコミュニティ主導の深層研究フレームワークです。私たちの目標は、言語モデルとウェブ検索、クローリング、Pythonコード実行などの専門ツールを組み合わせながら、これを可能にしたコミュニティに貢献することです。
 
-詳細については[DeerFlowの公式ウェブサイト](https://deerflow.tech/)をご覧ください。
+詳細については[BTF Brainの公式ウェブサイト](https://BTF Brain.tech/)をご覧ください。
 
 ## デモ
 
@@ -17,18 +17,18 @@
 
 https://github.com/user-attachments/assets/f3786598-1f2a-4d07-919e-8b99dfa1de3e
 
-このデモでは、DeerFlowの使用方法を紹介しています：
+このデモでは、BTF Brainの使用方法を紹介しています：
 - MCPサービスとのシームレスな統合
 - 深層研究プロセスの実施と画像を含む包括的なレポートの作成
 - 生成されたレポートに基づくポッドキャストオーディオの作成
 
 ### リプレイ例
 
-- [エッフェル塔は世界一高いビルと比べてどれくらい高い？](https://deerflow.tech/chat?replay=eiffel-tower-vs-tallest-building)
-- [GitHubで最も人気のあるリポジトリは？](https://deerflow.tech/chat?replay=github-top-trending-repo)
-- [南京の伝統料理に関する記事を書く](https://deerflow.tech/chat?replay=nanjing-traditional-dishes)
-- [賃貸アパートの装飾方法は？](https://deerflow.tech/chat?replay=rental-apartment-decoration)
-- [公式ウェブサイトでより多くのリプレイ例をご覧ください。](https://deerflow.tech/#case-studies)
+- [エッフェル塔は世界一高いビルと比べてどれくらい高い？](https://BTF Brain.tech/chat?replay=eiffel-tower-vs-tallest-building)
+- [GitHubで最も人気のあるリポジトリは？](https://BTF Brain.tech/chat?replay=github-top-trending-repo)
+- [南京の伝統料理に関する記事を書く](https://BTF Brain.tech/chat?replay=nanjing-traditional-dishes)
+- [賃貸アパートの装飾方法は？](https://BTF Brain.tech/chat?replay=rental-apartment-decoration)
+- [公式ウェブサイトでより多くのリプレイ例をご覧ください。](https://BTF Brain.tech/#case-studies)
 
 ---
 
@@ -49,7 +49,7 @@ https://github.com/user-attachments/assets/f3786598-1f2a-4d07-919e-8b99dfa1de3e
 
 ## クイックスタート
 
-DeerFlowはPythonで開発され、Node.jsで書かれたWeb UIが付属しています。スムーズなセットアッププロセスを確保するために、以下のツールの使用をお勧めします：
+BTF BrainはPythonで開発され、Node.jsで書かれたWeb UIが付属しています。スムーズなセットアッププロセスを確保するために、以下のツールの使用をお勧めします：
 
 ### 推奨ツール
 - **[`uv`](https://docs.astral.sh/uv/getting-started/installation/):**
@@ -137,7 +137,7 @@ bootstrap.bat -d
 
 ## サポートされている検索エンジン
 
-DeerFlowは複数の検索エンジンをサポートしており、`.env`ファイルの`SEARCH_API`変数で設定できます：
+BTF Brainは複数の検索エンジンをサポートしており、`.env`ファイルの`SEARCH_API`変数で設定できます：
 
 - **Tavily**（デフォルト）：AI アプリケーション向けの専門検索 API
     - `.env`ファイルに`TAVILY_API_KEY`が必要
@@ -203,10 +203,10 @@ SEARCH_API=tavily
 
 ## アーキテクチャ
 
-DeerFlowは、自動研究とコード分析のためのモジュラーなマルチエージェントシステムアーキテクチャを実装しています。システムはLangGraph上に構築され、コンポーネントが明確に定義されたメッセージパッシングシステムを通じて通信する柔軟な状態ベースのワークフローを実現しています。
+BTF Brainは、自動研究とコード分析のためのモジュラーなマルチエージェントシステムアーキテクチャを実装しています。システムはLangGraph上に構築され、コンポーネントが明確に定義されたメッセージパッシングシステムを通じて通信する柔軟な状態ベースのワークフローを実現しています。
 
 ![アーキテクチャ図](./assets/architecture.png)
-> [deerflow.tech](https://deerflow.tech/#multi-agent-architecture)でライブで確認できます
+> [BTF Brain.tech](https://BTF Brain.tech/#multi-agent-architecture)でライブで確認できます
 
 システムは以下のコンポーネントを含む合理化されたワークフローを採用しています：
 
@@ -232,7 +232,7 @@ DeerFlowは、自動研究とコード分析のためのモジュラーなマル
 
 ## テキスト読み上げ統合
 
-DeerFlowには現在、研究レポートを音声に変換できるテキスト読み上げ（TTS）機能が含まれています。この機能は火山引擎TTS APIを使用して高品質なテキストオーディオを生成します。速度、音量、ピッチなどの特性もカスタマイズ可能です。
+BTF Brainには現在、研究レポートを音声に変換できるテキスト読み上げ（TTS）機能が含まれています。この機能は火山引擎TTS APIを使用して高品質なテキストオーディオを生成します。速度、音量、ピッチなどの特性もカスタマイズ可能です。
 
 ### TTS APIの使用
 
@@ -281,11 +281,11 @@ make format
 
 ### LangGraph Studioによるデバッグ
 
-DeerFlowはワークフローアーキテクチャとしてLangGraphを使用しています。LangGraph Studioを使用してワークフローをリアルタイムでデバッグおよび可視化できます。
+BTF BrainはワークフローアーキテクチャとしてLangGraphを使用しています。LangGraph Studioを使用してワークフローをリアルタイムでデバッグおよび可視化できます。
 
 #### ローカルでLangGraph Studioを実行
 
-DeerFlowには`langgraph.json`設定ファイルが含まれており、これがLangGraph Studioのグラフ構造と依存関係を定義しています。このファイルはプロジェクトで定義されたワークフローグラフを指し、`.env`ファイルから環境変数を自動的に読み込みます。
+BTF Brainには`langgraph.json`設定ファイルが含まれており、これがLangGraph Studioのグラフ構造と依存関係を定義しています。このファイルはプロジェクトで定義されたワークフローグラフを指し、`.env`ファイルから環境変数を自動的に読み込みます。
 
 ##### Mac
 
@@ -333,7 +333,7 @@ Studio UIで研究トピックを送信すると、次を含む全ワークフ�
 
 ## 例
 
-以下の例はDeerFlowの機能を示しています：
+以下の例はBTF Brainの機能を示しています：
 
 ### 研究レポート
 
@@ -410,7 +410,7 @@ uv run main.py --help
 
 ### 人間参加型ループ
 
-DeerFlowには人間参加型ループメカニズムが含まれており、研究計画を実行する前にレビュー、編集、承認することができます：
+BTF Brainには人間参加型ループメカニズムが含まれており、研究計画を実行する前にレビュー、編集、承認することができます：
 
 1. **計画レビュー**：人間参加型ループが有効な場合、システムは実行前に生成された研究計画を表示
 
@@ -452,22 +452,22 @@ DeerFlowには人間参加型ループメカニズムが含まれており、研
 
 ## 謝辞
 
-DeerFlowはオープンソースコミュニティの素晴らしい成果の上に構築されています。DeerFlowを可能にしたすべてのプロジェクトと貢献者に深く感謝します。私たちは確かに巨人の肩の上に立っています。
+BTF Brainはオープンソースコミュニティの素晴らしい成果の上に構築されています。BTF Brainを可能にしたすべてのプロジェクトと貢献者に深く感謝します。私たちは確かに巨人の肩の上に立っています。
 
 以下のプロジェクトに心からの感謝を表します：
 
 - **[LangChain](https://github.com/langchain-ai/langchain)**：彼らの優れたフレームワークは、シームレスな統合と機能性を実現するLLM相互作用とチェーンに力を与えています。
-- **[LangGraph](https://github.com/langchain-ai/langgraph)**：マルチエージェントオーケストレーションへの革新的アプローチは、DeerFlowの複雑なワークフローの実現に不可欠でした。
+- **[LangGraph](https://github.com/langchain-ai/langgraph)**：マルチエージェントオーケストレーションへの革新的アプローチは、BTF Brainの複雑なワークフローの実現に不可欠でした。
 
 これらのプロジェクトはオープンソースコラボレーションの変革力を示しており、その基盤の上に構築できることを誇りに思います。
 
 ### 主要貢献者
-`DeerFlow`の主要な作者に心から感謝します。彼らのビジョン、情熱、献身がこのプロジェクトを実現しました：
+`BTF Brain`の主要な作者に心から感謝します。彼らのビジョン、情熱、献身がこのプロジェクトを実現しました：
 
 - **[Daniel Walnut](https://github.com/hetaoBackend/)**
 - **[Henry Li](https://github.com/magiccube/)**
 
-あなたの揺るぎない取り組みと専門知識がDeerFlowの成功を推進しています。この旅をリードしていただき光栄です。
+あなたの揺るぎない取り組みと専門知識がBTF Brainの成功を推進しています。この旅をリードしていただき光栄です。
 
 ## スター履歴
 

@@ -12,7 +12,7 @@ import { SectionHeader } from "../components/section-header";
 /**
  * 加入社区区块组件
  * 
- * 鼓励用户加入DeerFlow社区，参与贡献和协作
+ * 鼓励用户加入BTF Brain社区，参与贡献和协作
  * @returns {JSX.Element} 加入社区区块
  */
 export function JoinCommunitySection() {
@@ -23,10 +23,10 @@ export function JoinCommunitySection() {
         anchor="join-community"
         title={
           <AuroraText colors={["#60A5FA", "#A5FA60", "#A560FA"]}>
-            Join the DeerFlow Community
+            Join the BTF Brain Community
           </AuroraText>
         }
-        description="Contribute brilliant ideas to shape the future of DeerFlow. Collaborate, innovate, and make impacts."
+        description="Contribute brilliant ideas to shape the future of BTF Brain. Collaborate, innovate, and make impacts."
       />
       {/* GitHub贡献按钮 */}
       <Button className="text-xl" size="lg" asChild>

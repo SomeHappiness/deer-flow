@@ -52,7 +52,7 @@ export function Jumbotron() {
         </h1>
         {/* 产品简介 */}
         <p className="max-w-4xl p-2 text-center text-sm opacity-85 md:text-2xl">
-          Meet DeerFlow, your personal Deep Research assistant. With powerful
+          Meet BTF Brain, your personal Deep Research assistant. With powerful
           tools like search engines, web crawlers, Python and MCP services, it
           delivers instant insights, comprehensive reports, and even captivating
           podcasts.
