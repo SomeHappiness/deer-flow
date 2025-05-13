@@ -13,6 +13,7 @@ import "katex/dist/katex.min.css";
 
 import { Button } from "~/components/ui/button";
 import { rehypeSplitWordsIntoSpans } from "~/core/rehype";
+import { autoFixMarkdown } from "~/core/utils/markdown";
 import { cn } from "~/lib/utils";
 
 import Image from "./image";
@@ -38,23 +39,25 @@ export function Markdown({
   children,
   style,
   enableCopy,
-  animate = false,
+  animated = false,
   ...props
 }: ReactMarkdownOptions & {
   className?: string;
   enableCopy?: boolean;
   style?: React.CSSProperties;
-  animate?: boolean;
+  animated?: boolean;
 }) {
   // 使用静态数组避免无限渲染循环
   const rehypePluginsWithAnimate = useMemo(() => [rehypeKatex, rehypeSplitWordsIntoSpans], []);
   const rehypePluginsWithoutAnimate = useMemo(() => [rehypeKatex], []);
   
-  const currentRehypePlugins = animate ? rehypePluginsWithAnimate : rehypePluginsWithoutAnimate;
+  const currentRehypePlugins = animated ? rehypePluginsWithAnimate : rehypePluginsWithoutAnimate;
   
   // 提前处理Markdown内容，避免重复计算
   const processedContent = useMemo(() => {
-    return dropMarkdownQuote(processKatexInMarkdown(children));
+    return autoFixMarkdown(
+      dropMarkdownQuote(processKatexInMarkdown(children ?? "")) ?? ""
+    );
   }, [children]);
   
   return (

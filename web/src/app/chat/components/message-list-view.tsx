@@ -10,7 +10,10 @@ import { LoadingAnimation } from "~/components/deer-flow/loading-animation";
 import { Markdown } from "~/components/deer-flow/markdown";
 import { RainbowText } from "~/components/deer-flow/rainbow-text";
 import { RollingText } from "~/components/deer-flow/rolling-text";
-import { ScrollContainer, type ScrollContainerRef } from "~/components/deer-flow/scroll-container";
+import {
+  ScrollContainer,
+  type ScrollContainerRef,
+} from "~/components/deer-flow/scroll-container";
 import { Tooltip } from "~/components/deer-flow/tooltip";
 import { Button } from "~/components/ui/button";
 import {
@@ -24,8 +27,11 @@ import type { Message, Option } from "~/core/messages";
 import {
   closeResearch,
   openResearch,
+  useLastFeedbackMessageId,
+  useLastInterruptMessage,
   useMessage,
-  useResearchTitle,
+  useMessageIds,
+  useResearchMessage,
   useStore,
 } from "~/core/store";
 import { parseJSON } from "~/core/utils";
@@ -58,34 +64,10 @@ export function MessageListView({
   // 滚动容器引用
   const scrollContainerRef = useRef<ScrollContainerRef>(null);
   
-  // 获取消息列表
-  const messageIds = useStore((state) => state.messageIds);
-  
-  // 检查中断消息
-  const interruptMessage = useStore((state) => {
-    if (messageIds.length >= 2) {
-      const lastMessage = state.messages.get(
-        messageIds[messageIds.length - 1]!,
-      );
-      return lastMessage?.finishReason === "interrupt" ? lastMessage : null;
-    }
-    return null;
-  });
-  
-  // 等待反馈的消息ID
-  const waitingForFeedbackMessageId = useStore((state) => {
-    if (messageIds.length >= 2) {
-      const lastMessage = state.messages.get(
-        messageIds[messageIds.length - 1]!,
-      );
-      if (lastMessage && lastMessage.finishReason === "interrupt") {
-        return state.messageIds[state.messageIds.length - 2];
-      }
-    }
-    return null;
-  });
-  
-  // 响应状态和研究状态
+  // 获取消息状态
+  const messageIds = useMessageIds();
+  const interruptMessage = useLastInterruptMessage();
+  const waitingForFeedbackMessageId = useLastFeedbackMessageId();
   const responding = useStore((state) => state.responding);
   const noOngoingResearch = useStore(
     (state) => state.ongoingResearchId === null,
@@ -108,7 +90,9 @@ export function MessageListView({
         scrollContainerRef.current.scrollToBottom();
       }
     }, 500);
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -165,7 +149,7 @@ function MessageListItem({
   interruptMessage,
   onFeedback,
   onSendMessage,
-  onToggleResearch
+  onToggleResearch,
 }: {
   className?: string;
   messageId: string;
@@ -179,9 +163,10 @@ function MessageListItem({
   onToggleResearch?: () => void;
 }) {
   const message = useMessage(messageId);
-  const startOfResearch = useStore((state) =>
-    state.researchIds.includes(messageId),
-  );
+  const researchIds = useStore((state) => state.researchIds);
+  const startOfResearch = useMemo(() => {
+    return researchIds.includes(messageId);
+  }, [researchIds, messageId]);
   if (message) {
     if (
       message.role === "user" ||
@@ -212,7 +197,10 @@ function MessageListItem({
       } else if (startOfResearch) {
         content = (
           <div className="w-full px-4">
-            <ResearchCard researchId={message.id} onToggleResearch={onToggleResearch} />
+            <ResearchCard
+              researchId={message.id}
+              onToggleResearch={onToggleResearch}
+            />
           </div>
         );
       } else {
@@ -252,125 +240,116 @@ function MessageListItem({
     }
     return null;
   }
+}
 
-  /**
-   * 消息气泡组件
-   * 
-   * 根据消息角色显示不同样式的气泡
-   * 用户消息显示右侧，助手消息显示左侧
-   * 
-   * @param {object} props - 组件属性 
-   * @param {string} [props.className] - 自定义CSS类名
-   * @param {Message} props.message - 消息对象
-   * @param {React.ReactNode} props.children - 子元素
-   * @returns {JSX.Element} 消息气泡组件
-   */
-  function MessageBubble({
-    className,
-    message,
-    children,
-  }: {
-    className?: string;
-    message: Message;
-    children: React.ReactNode;
-  }) {
-    return (
-      <div
-        className={cn(
-          `flex w-fit max-w-[85%] flex-col rounded-2xl px-4 py-3 shadow`,
-          message.role === "user" &&
+/**
+ * 消息气泡组件
+ * 
+ * 根据消息角色显示不同样式的气泡
+ * 用户消息显示右侧，助手消息显示左侧
+ * 
+ * @param {object} props - 组件属性 
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {Message} props.message - 消息对象
+ * @param {React.ReactNode} props.children - 子元素
+ * @returns {JSX.Element} 消息气泡组件
+ */
+function MessageBubble({
+  className,
+  message,
+  children,
+}: {
+  className?: string;
+  message: Message;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        `flex w-fit max-w-[85%] flex-col rounded-2xl px-4 py-3 shadow`,
+        message.role === "user" &&
           "text-primary-foreground bg-brand rounded-ee-none",
-          message.role === "assistant" && "bg-card rounded-es-none",
-          className,
-        )}
-      >
-        {children}
-      </div>
-    );
-  }
+        message.role === "assistant" && "bg-card rounded-es-none",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
 
-  /**
-   * 研究卡片组件
-   * 
-   * 显示研究信息，包括标题和状态
-   * 支持打开/关闭研究的功能
-   * 
-   * @param {object} props - 组件属性
-   * @param {string} [props.className] - 自定义CSS类名
-   * @param {string} props.researchId - 研究ID
-   * @param {function} [props.onToggleResearch] - 切换研究状态的回调函数
-   * @returns {JSX.Element} 研究卡片组件
-   */
-  function ResearchCard({
-    className,
-    researchId,
-    onToggleResearch
-  }: {
-    className?: string;
-    researchId: string;
-    onToggleResearch?: () => void;
-  }) {
-    // 获取报告相关信息
-    const reportId = useStore((state) =>
-      state.researchReportIds.get(researchId),
-    );
-    const hasReport = useStore((state) =>
-      state.researchReportIds.has(researchId),
-    );
-    const reportGenerating = useStore(
-      (state) => hasReport && state.messages.get(reportId!)!.isStreaming,
-    );
-    const openResearchId = useStore((state) => state.openResearchId);
-    
-    // 计算研究状态文本
-    const state = useMemo(() => {
-      if (hasReport) {
-        return reportGenerating ? "Generating report..." : "Report generated";
-      }
-      return "Researching...";
-    }, [hasReport, reportGenerating]);
-    
-    // 获取研究标题
-    const title = useResearchTitle(researchId);
-    
-    /**
-     * 处理打开/关闭研究
-     * 根据当前状态切换研究的显示状态
-     */
-    const handleOpen = useCallback(() => {
-      if (openResearchId === researchId) {
-        closeResearch();
-      } else {
-        openResearch(researchId);
-      }
-      onToggleResearch?.();
-    }, [openResearchId, researchId, onToggleResearch]);
-    
-    return (
-      <Card className={cn("w-full", className)}>
-        <CardHeader>
-          <CardTitle>
-            <RainbowText animated={state !== "Report generated"}>
-              {title !== undefined && title !== "" ? title : "Deep Research"}
-            </RainbowText>
-          </CardTitle>
-        </CardHeader>
-        <CardFooter>
-          <div className="flex w-full">
-            <RollingText className="text-muted-foreground flex-grow text-sm">
-              {state}
-            </RollingText>
-            <Button
-              variant={!openResearchId ? "default" : "outline"}
-              onClick={handleOpen}
-            >
-              {researchId !== openResearchId ? "Open" : "Close"}
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    );
-  }
+/**
+ * 研究卡片组件
+ * 
+ * 显示研究信息，包括标题和状态
+ * 支持打开/关闭研究的功能
+ * 
+ * @param {object} props - 组件属性
+ * @param {string} [props.className] - 自定义CSS类名
+ * @param {string} props.researchId - 研究ID
+ * @param {function} [props.onToggleResearch] - 切换研究状态的回调函数
+ * @returns {JSX.Element} 研究卡片组件
+ */
+function ResearchCard({
+  className,
+  researchId,
+  onToggleResearch,
+}: {
+  className?: string;
+  researchId: string;
+  onToggleResearch?: () => void;
+}) {
+  const reportId = useStore((state) => state.researchReportIds.get(researchId));
+  const hasReport = reportId !== undefined;
+  const reportGenerating = useStore(
+    (state) => hasReport && state.messages.get(reportId)!.isStreaming,
+  );
+  const openResearchId = useStore((state) => state.openResearchId);
+  const state = useMemo(() => {
+    if (hasReport) {
+      return reportGenerating ? "Generating report..." : "Report generated";
+    }
+    return "Researching...";
+  }, [hasReport, reportGenerating]);
+  const msg = useResearchMessage(researchId);
+  const title = useMemo(() => {
+    if (msg) {
+      return parseJSON(msg.content ?? "", { title: "" }).title;
+    }
+    return undefined;
+  }, [msg]);
+  const handleOpen = useCallback(() => {
+    if (openResearchId === researchId) {
+      closeResearch();
+    } else {
+      openResearch(researchId);
+    }
+    onToggleResearch?.();
+  }, [openResearchId, researchId, onToggleResearch]);
+  return (
+    <Card className={cn("w-full", className)}>
+      <CardHeader>
+        <CardTitle>
+          <RainbowText animated={state !== "Report generated"}>
+            {title !== undefined && title !== "" ? title : "Deep Research"}
+          </RainbowText>
+        </CardTitle>
+      </CardHeader>
+      <CardFooter>
+        <div className="flex w-full">
+          <RollingText className="text-muted-foreground flex-grow text-sm">
+            {state}
+          </RollingText>
+          <Button
+            variant={!openResearchId ? "default" : "outline"}
+            onClick={handleOpen}
+          >
+            {researchId !== openResearchId ? "Open" : "Close"}
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
+  );
 }
 
 // 用于计划接受反馈的问候语列表
@@ -437,16 +416,17 @@ function PlanCard({
     <Card className={cn("w-full", className)}>
       <CardHeader>
         <CardTitle>
-          <Markdown animate>
-            {`### ${plan.title !== undefined && plan.title !== ""
-              ? plan.title
-              : "Deep Research"
-              }`}
+          <Markdown animated>
+            {`### ${
+              plan.title !== undefined && plan.title !== ""
+                ? plan.title
+                : "Deep Research"
+            }`}
           </Markdown>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Markdown className="opacity-80" animate>
+        <Markdown className="opacity-80" animated>
           {plan.thought}
         </Markdown>
         {plan.steps && (
@@ -454,10 +434,10 @@ function PlanCard({
             {plan.steps.map((step, i) => (
               <li key={`step-${i}`}>
                 <h3 className="mb text-lg font-medium">
-                  <Markdown animate>{step.title}</Markdown>
+                  <Markdown animated>{step.title}</Markdown>
                 </h3>
                 <div className="text-muted-foreground text-sm">
-                  <Markdown animate>{step.description}</Markdown>
+                  <Markdown animated>{step.description}</Markdown>
                 </div>
               </li>
             ))}
@@ -528,6 +508,9 @@ function PodcastCard({
   const isGenerating = useMemo(() => {
     return message.isStreaming;
   }, [message.isStreaming]);
+  const hasError = useMemo(() => {
+    return data?.error !== undefined;
+  }, [data]);
   
   // 播放状态管理
   const [isPlaying, setIsPlaying] = useState(false);
@@ -538,15 +521,21 @@ function PodcastCard({
         <div className="text-muted-foreground flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             {isGenerating ? <LoadingOutlined /> : <Headphones size={16} />}
-            <RainbowText animated={isGenerating}>
-              {isGenerating
-                ? "Generating podcast..."
-                : isPlaying
-                  ? "Now playing podcast..."
-                  : "Podcast"}
-            </RainbowText>
+            {!hasError ? (
+              <RainbowText animated={isGenerating}>
+                {isGenerating
+                  ? "Generating podcast..."
+                  : isPlaying
+                    ? "Now playing podcast..."
+                    : "Podcast"}
+              </RainbowText>
+            ) : (
+              <div className="text-red-500">
+                Error when generating podcast. Please try again.
+              </div>
+            )}
           </div>
-          {!isGenerating && (
+          {!hasError && !isGenerating && (
             <div className="flex">
               <Tooltip title="Download podcast">
                 <Button variant="ghost" size="icon" asChild>
@@ -568,13 +557,17 @@ function PodcastCard({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <audio
-          className="w-full"
-          src={audioUrl}
-          controls
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        />
+        {audioUrl ? (
+          <audio
+            className="w-full"
+            src={audioUrl}
+            controls
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+          />
+        ) : (
+          <div className="w-full"></div>
+        )}
       </CardContent>
     </Card>
   );
