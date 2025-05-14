@@ -5,6 +5,8 @@ import { BookOpen, ChevronLeft, ChevronRight, MessageSquare, Plus, Settings } fr
 import { useTheme } from "next-themes";
 import { cn } from "~/lib/utils";
 import { Logo } from "~/components/deer-flow/logo";
+import { SettingsDialog } from "~/app/settings/dialogs/settings-dialog";
+import { ThemeToggle } from "~/components/deer-flow/theme-toggle";
 
 /**
  * 侧栏组件
@@ -37,9 +39,9 @@ export function Sidebar({ collapsed, onToggle, className }: {
         className
       )}
     >
-      {/* 顶部Logo区域，字体和图标加大，间距缩小 */}
+      {/* 顶部Logo区域，折叠时只显示图标 */}
       <div className="flex items-center justify-center h-20 w-full pb-1">
-        <Logo className="text-2xl md:text-3xl font-bold" />
+        <Logo className="text-2xl md:text-3xl font-bold" showText={!collapsed} />
       </div>
       {/* 新建对话按钮，紧贴Logo下方 */}
       <div className="pt-0 pb-3 px-3">
@@ -108,8 +110,13 @@ export function Sidebar({ collapsed, onToggle, className }: {
         </button> */}
       </div>
 
-      {/* 展开/收起按钮 */}
-      <div className="flex justify-end p-3 pt-0">
+      {/* 展开/收起按钮和底部操作区 */}
+      <div className="flex items-center gap-2 justify-end p-3 pt-0">
+        {/* 主题切换按钮 */}
+        <ThemeToggle />
+        {/* 设置按钮 */}
+        <SettingsDialog />
+        {/* 展开/收起按钮 */}
         <button
           onClick={onToggle}
           className={cn(

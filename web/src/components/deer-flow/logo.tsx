@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { cn } from "~/lib/utils";
+import { RainbowText } from "~/components/deer-flow/rainbow-text";
 
 /**
  * Logo组件
@@ -13,13 +14,18 @@ import { cn } from "~/lib/utils";
  * 
  * @returns React组件，显示带有链接的应用标识
  */
-export function Logo({ className }: { className?: string }) {
+export function Logo({ className, showText = true }: { className?: string; showText?: boolean }) {
   return (
     <Link
-      className={cn("opacity-70 transition-opacity duration-300 hover:opacity-100", className)}
+      className={cn("opacity-70 transition-opacity duration-300 hover:opacity-100 flex items-center", className)}
       href="/"
     >
-      🧠 Nina
+      <span className="text-2xl md:text-3xl">🧠</span>
+      {showText && (
+        <RainbowText animated className="ml-2 text-2xl md:text-3xl font-bold">
+          Nina
+        </RainbowText>
+      )}
     </Link>
   );
 }
