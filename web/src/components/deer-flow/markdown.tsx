@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { Check, Copy } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import ReactMarkdown, {
   type Options as ReactMarkdownOptions,
 } from "react-markdown";
@@ -47,18 +47,46 @@ export function Markdown({
   style?: React.CSSProperties;
   animated?: boolean;
 }) {
+  // 组件挂载状态的ref
+  const isMountedRef = useRef(true);
+  
+  // 在组件卸载时设置为false
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
   // 使用静态数组避免无限渲染循环
-  const rehypePluginsWithAnimate = useMemo(() => [rehypeKatex, rehypeSplitWordsIntoSpans], []);
+  const rehypePluginsWithAnimate = useMemo(() => {
+    try {
+      return [rehypeKatex, rehypeSplitWordsIntoSpans];
+    } catch (error) {
+      console.error("Error creating rehype plugins with animation:", error);
+      return [rehypeKatex];
+    }
+  }, []);
+  
   const rehypePluginsWithoutAnimate = useMemo(() => [rehypeKatex], []);
   
   const currentRehypePlugins = animated ? rehypePluginsWithAnimate : rehypePluginsWithoutAnimate;
   
   // 提前处理Markdown内容，避免重复计算
   const processedContent = useMemo(() => {
-    return autoFixMarkdown(
-      dropMarkdownQuote(processKatexInMarkdown(children ?? "")) ?? ""
-    );
+    if (!children) return "";
+    try {
+      return autoFixMarkdown(
+        dropMarkdownQuote(processKatexInMarkdown(children) ?? "") ?? ""
+      );
+    } catch (error) {
+      console.error("Error processing markdown content:", error);
+      return typeof children === 'string' ? children : "";
+    }
   }, [children]);
+  
+  if (!processedContent && !children) {
+    return null;
+  }
   
   return (
     <div
@@ -108,6 +136,16 @@ export function Markdown({
  */
 function CopyButton({ content }: { content: string }) {
   const [copied, setCopied] = useState(false);
+  // 组件挂载状态的ref
+  const isMountedRef = useRef(true);
+  
+  // 在组件卸载时设置为false
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
   return (
     <Tooltip title="Copy">
       <Button
@@ -117,10 +155,14 @@ function CopyButton({ content }: { content: string }) {
         onClick={async () => {
           try {
             await navigator.clipboard.writeText(content);
-            setCopied(true);
-            setTimeout(() => {
-              setCopied(false);
-            }, 1000);
+            if (isMountedRef.current) {
+              setCopied(true);
+              setTimeout(() => {
+                if (isMountedRef.current) {
+                  setCopied(false);
+                }
+              }, 1000);
+            }
           } catch (error) {
             console.error(error);
           }

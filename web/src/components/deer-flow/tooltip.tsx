@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { CSSProperties } from "react";
+import { useRef, useEffect } from "react";
 
 import {
   Tooltip as ShadcnTooltip,
@@ -45,34 +46,59 @@ export function Tooltip({
   side?: "left" | "right" | "top" | "bottom";
   sideOffset?: number;
 }) {
-  // 不直接传递 open 属性，而是使用条件渲染
-  return (
-    <TooltipProvider>
-      {open !== undefined ? (
-        <ShadcnTooltip delayDuration={750} defaultOpen={open}>
-          <TooltipTrigger asChild>{children}</TooltipTrigger>
-          <TooltipContent
-            className={cn(className)}
-            style={style}
-            side={side}
-            sideOffset={sideOffset}
-          >
-            {title}
-          </TooltipContent>
-        </ShadcnTooltip>
-      ) : (
-        <ShadcnTooltip delayDuration={750}>
-          <TooltipTrigger asChild>{children}</TooltipTrigger>
-          <TooltipContent
-            className={cn(className)}
-            style={style}
-            side={side}
-            sideOffset={sideOffset}
-          >
-            {title}
-          </TooltipContent>
-        </ShadcnTooltip>
-      )}
-    </TooltipProvider>
-  );
+  // 组件挂载状态ref
+  const isMountedRef = useRef(true);
+  
+  // 组件卸载时设置状态
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
+  // 如果没有提供children或title，则不渲染tooltip
+  if (!children) {
+    return null;
+  }
+  
+  try {
+    // 不直接传递 open 属性，而是使用条件渲染
+    return (
+      <TooltipProvider>
+        {open !== undefined ? (
+          <ShadcnTooltip delayDuration={750} defaultOpen={open}>
+            <TooltipTrigger asChild>{children}</TooltipTrigger>
+            {title && (
+              <TooltipContent
+                className={cn(className)}
+                style={style}
+                side={side}
+                sideOffset={sideOffset}
+              >
+                {title}
+              </TooltipContent>
+            )}
+          </ShadcnTooltip>
+        ) : (
+          <ShadcnTooltip delayDuration={750}>
+            <TooltipTrigger asChild>{children}</TooltipTrigger>
+            {title && (
+              <TooltipContent
+                className={cn(className)}
+                style={style}
+                side={side}
+                sideOffset={sideOffset}
+              >
+                {title}
+              </TooltipContent>
+            )}
+          </ShadcnTooltip>
+        )}
+      </TooltipProvider>
+    );
+  } catch (error) {
+    // 发生错误时，直接返回子元素，不渲染tooltip
+    console.error("Error rendering tooltip:", error);
+    return <>{children}</>;
+  }
 }
