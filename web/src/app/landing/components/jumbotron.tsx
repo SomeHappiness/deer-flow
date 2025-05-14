@@ -46,7 +46,7 @@ export function Jumbotron() {
         {/* 主标题，渐变色+动态文字 */}
         <h1 className="text-center text-4xl font-bold md:text-6xl">
           <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-            The world in {" "}
+            The world at {" "}
           </span>
           <AuroraText> Your Fingertips</AuroraText>
         </h1>
