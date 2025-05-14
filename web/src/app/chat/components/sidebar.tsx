@@ -4,6 +4,7 @@
 import { BookOpen, ChevronLeft, ChevronRight, MessageSquare, Plus, Settings } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "~/lib/utils";
+import { Logo } from "~/components/deer-flow/logo";
 
 /**
  * 侧栏组件
@@ -32,20 +33,24 @@ export function Sidebar({ collapsed, onToggle, className }: {
         "h-full transition-all duration-300 flex flex-col",
         "border-r border-border shadow-sm",
         isDark ? "bg-[#202123] text-white" : "bg-[#f9f9fa] text-gray-800",
-        collapsed ? "w-[70px]" : "w-[260px]",
+        collapsed ? "w-[70px]" : "w-[230px]",
         className
       )}
     >
-      {/* 新建对话按钮 */}
-      <div className="p-3">
+      {/* 顶部Logo区域，字体和图标加大，间距缩小 */}
+      <div className="flex items-center justify-center h-20 w-full pb-1">
+        <Logo className="text-2xl md:text-3xl font-bold" />
+      </div>
+      {/* 新建对话按钮，紧贴Logo下方 */}
+      <div className="pt-0 pb-3 px-3">
         <button 
           className={cn(
-            "flex items-center gap-2 w-full rounded-md p-3 transition-colors",
+            "flex items-center gap-2 w-full rounded-md p-3 transition-colors text-base md:text-lg",
             "border border-border/60 hover:bg-gray-500/10",
             collapsed ? "justify-center" : ""
           )}
         >
-          <Plus size={16} />
+          <Plus size={22} />
           {!collapsed && <span>新建对话</span>}
         </button>
       </div>
@@ -72,7 +77,7 @@ export function Sidebar({ collapsed, onToggle, className }: {
             )}
           >
             <MessageSquare size={16} />
-            {!collapsed && <span className="truncate">示例对话 {i + 1}</span>}
+            {!collapsed && <span className="truncate">北京冬奥会获得多少枚金牌？</span>}
           </button>
         ))}
       </div>
@@ -83,24 +88,24 @@ export function Sidebar({ collapsed, onToggle, className }: {
         "flex flex-col gap-1"
       )}>
         {/* 帮助文档 */}
-        <button className={cn(
+        {/* <button className={cn(
           "flex items-center gap-2 w-full rounded-md p-3",
           "hover:bg-gray-500/10 transition-colors",
           collapsed ? "justify-center" : ""
         )}>
           <BookOpen size={16} />
           {!collapsed && <span>帮助文档</span>}
-        </button>
+        </button> */}
         
         {/* 设置 */}
-        <button className={cn(
+        {/* <button className={cn(
           "flex items-center gap-2 w-full rounded-md p-3",
           "hover:bg-gray-500/10 transition-colors",
           collapsed ? "justify-center" : ""
         )}>
           <Settings size={16} />
           {!collapsed && <span>设置</span>}
-        </button>
+        </button> */}
       </div>
 
       {/* 展开/收起按钮 */}

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 /**
  * Logo组件
@@ -12,10 +13,10 @@ import Link from "next/link";
  * 
  * @returns React组件，显示带有链接的应用标识
  */
-export function Logo() {
+export function Logo({ className }: { className?: string }) {
   return (
     <Link
-      className="opacity-70 transition-opacity duration-300 hover:opacity-100"
+      className={cn("opacity-70 transition-opacity duration-300 hover:opacity-100", className)}
       href="/"
     >
       🧠 Nina

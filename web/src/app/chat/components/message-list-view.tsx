@@ -222,8 +222,9 @@ function MessageListItem({
       }
       if (content) {
         return (
+          // 消息的间距：如果你想调整消息间距，只需修改 mt-10 为其他 Tailwind 间距类（如 mt-6、mt-4 等）
           <motion.li
-            className="mt-10"
+            className="mt-7"
             key={messageId}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
