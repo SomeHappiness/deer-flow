@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { CSSProperties } from "react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 import {
   Tooltip as ShadcnTooltip,
@@ -46,55 +46,46 @@ export function Tooltip({
   side?: "left" | "right" | "top" | "bottom";
   sideOffset?: number;
 }) {
-  // 组件挂载状态ref
-  const isMountedRef = useRef(true);
+  // 使用简单实现，避免 Popper 相关问题
+  const [showFallbackTooltip, setShowFallbackTooltip] = useState(false);
   
-  // 组件卸载时设置状态
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-  
-  // 如果没有提供children或title，则不渲染tooltip
+  // 如果没有提供children，则不渲染
   if (!children) {
     return null;
   }
   
+  // 如果没有提供title，则只渲染children
+  if (!title) {
+    return <>{children}</>;
+  }
+  
   try {
-    // 不直接传递 open 属性，而是使用条件渲染
+    // 尝试使用更简单的实现，不依赖于 PopperAnchor
     return (
-      <TooltipProvider>
-        {open !== undefined ? (
-          <ShadcnTooltip delayDuration={750} defaultOpen={open}>
-            <TooltipTrigger asChild>{children}</TooltipTrigger>
-            {title && (
-              <TooltipContent
-                className={cn(className)}
-                style={style}
-                side={side}
-                sideOffset={sideOffset}
-              >
-                {title}
-              </TooltipContent>
+      <div className="relative inline-block">
+        <div
+          onMouseEnter={() => setShowFallbackTooltip(true)}
+          onMouseLeave={() => setShowFallbackTooltip(false)}
+        >
+          {children}
+        </div>
+        {showFallbackTooltip && title && (
+          <div
+            className={cn(
+              "absolute z-50 rounded-md bg-card px-3 py-1.5 text-sm shadow-md",
+              side === "top" && "bottom-full mb-2",
+              side === "bottom" && "top-full mt-2",
+              side === "left" && "right-full mr-2",
+              side === "right" && "left-full ml-2",
+              !side && "top-full mt-2", // 默认显示在下方
+              className
             )}
-          </ShadcnTooltip>
-        ) : (
-          <ShadcnTooltip delayDuration={750}>
-            <TooltipTrigger asChild>{children}</TooltipTrigger>
-            {title && (
-              <TooltipContent
-                className={cn(className)}
-                style={style}
-                side={side}
-                sideOffset={sideOffset}
-              >
-                {title}
-              </TooltipContent>
-            )}
-          </ShadcnTooltip>
+            style={style}
+          >
+            {title}
+          </div>
         )}
-      </TooltipProvider>
+      </div>
     );
   } catch (error) {
     // 发生错误时，直接返回子元素，不渲染tooltip

@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { LRUCache } from "lru-cache";
 import { BookOpenText, PencilRuler, Search } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -99,16 +99,40 @@ export function ResearchActivitiesBlock({
  */
 function ActivityMessage({ messageId }: { messageId: string }) {
   const message = useMessage(messageId);
-  if (message?.agent && message.content) {
-    if (message.agent !== "reporter" && message.agent !== "planner") {
-      return (
-        <div className="px-4 py-2">
-          <Markdown animated>{message.content}</Markdown>
-        </div>
-      );
-    }
+  // 添加组件挂载状态追踪
+  const isMounted = useRef(true);
+  
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  // 更加严格的数据验证
+  const hasValidContent = useMemo(() => {
+    return message?.agent 
+      && message.content 
+      && typeof message.content === 'string' 
+      && message.content.trim() !== ''
+      && message.agent !== "reporter" 
+      && message.agent !== "planner";
+  }, [message]);
+  
+  // 如果没有有效内容，直接返回null
+  if (!hasValidContent) {
+    return null;
   }
-  return null;
+  
+  try {
+    return (
+      <div className="px-4 py-2">
+        <Markdown animated={false}>{message?.content}</Markdown>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error rendering ActivityMessage:", error);
+    return null;
+  }
 }
 
 /**
