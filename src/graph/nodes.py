@@ -215,7 +215,7 @@ def coordinator_node(
 
     goto = "__end__"
     locale = state.get("locale", "en-US")  # Default locale if not specified
-
+    print("response:"+str(response))
     if len(response.tool_calls) > 0:
         goto = "planner"
         if state.get("enable_background_investigation"):
@@ -237,7 +237,8 @@ def coordinator_node(
         logger.debug(f"Coordinator response: {response}")
 
     return Command(
-        update={"locale": locale},
+        update={"locale": locale,      
+                "messages": [AIMessage(content="正在为你规划任务，请稍候...", name="coordinator")]},
         goto=goto,
     )
 

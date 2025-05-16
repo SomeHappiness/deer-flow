@@ -116,13 +116,12 @@ export const useStore = create<{
 
 /**
  * 发送消息并处理响应
- * 
- * 将用户消息添加到状态并发起流式请求
- * 处理流式响应并更新状态
- * 
- * @param content 消息内容
- * @param options 选项，如中断反馈
- * @param abortOptions 中止选项
+ *
+ * 1. 用户消息先本地入库（appendMessage）
+ * 2. 调用 chatStream 与后端建立流式连接
+ * 3. for await 循环处理后端返回的每一条消息事件
+ * 4. 根据事件类型，创建或查找消息对象，并合并新内容
+ * 5. 更新全局状态，驱动前端 UI 实时刷新
  */
 export async function sendMessage(
   content?: string,
@@ -133,6 +132,7 @@ export async function sendMessage(
   } = {},
   options: { abortSignal?: AbortSignal } = {},
 ) {
+  // 1. 如果有用户输入，先本地插入一条"用户消息"
   if (content != null) {
     appendMessage({
       id: nanoid(),
@@ -143,6 +143,7 @@ export async function sendMessage(
     });
   }
 
+  // 2. 获取当前聊天设置，发起流式请求
   const settings = getChatStreamSettings();
   const stream = chatStream(
     content ?? "[REPLAY]",
@@ -159,38 +160,44 @@ export async function sendMessage(
     options,
   );
 
-  setResponding(true);
+  setResponding(true); // 标记"正在响应"
   let messageId: string | undefined;
   try {
+    // 3. 处理后端返回的每一条消息事件（流式）
     for await (const event of stream) {
       const { type, data } = event;
       messageId = data.id;
       let message: Message | undefined;
       if (type === "tool_call_result") {
+        // 工具调用结果，查找对应消息
         message = findMessageByToolCallId(data.tool_call_id);
       } else if (!existsMessage(messageId)) {
+        // 新消息，创建消息对象并入库
         message = {
           id: messageId,
           threadId: data.thread_id,
-          agent: data.agent,
-          role: data.role,
-          content: "",
-          contentChunks: [],
-          isStreaming: true,
+          agent: data.agent, // 例如 'coordinator'、'planner' 等
+          role: data.role,   // 'user' 或 'assistant'
+          content: "",      // 初始内容为空，后续合并
+          contentChunks: [], // 内容分片
+          isStreaming: true, // 标记为流式消息
           interruptFeedback,
         };
-        appendMessage(message);
+        appendMessage(message); // 新消息写入全局 store
       }
+      // 查找已存在的消息对象
       message ??= getMessage(messageId);
       if (message) {
+        // 4. 合并新内容到消息对象（如追加content、更新状态等）
         message = mergeMessage(message, event);
+        // 5. 更新全局状态，驱动 UI 刷新
         updateMessage(message);
       }
     }
   } catch {
+    // 错误处理：弹窗提示
     toast("An error occurred while generating the response. Please try again.");
-    // Update message status.
-    // TODO: const isAborted = (error as Error).name === "AbortError";
+    // 更新消息状态为非流式
     if (messageId != null) {
       const message = getMessage(messageId);
       if (message?.isStreaming) {
@@ -200,7 +207,7 @@ export async function sendMessage(
     }
     useStore.getState().setOngoingResearch(null);
   } finally {
-    setResponding(false);
+    setResponding(false); // 响应结束
   }
 }
 

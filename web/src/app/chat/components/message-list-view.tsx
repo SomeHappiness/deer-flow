@@ -331,9 +331,13 @@ function ResearchCard({
     <Card className={cn("w-full", className)}>
       <CardHeader>
         <CardTitle>
-          <RainbowText animated={state !== "Report generated"}>
-            {title !== undefined && title !== "" ? title : "Deep Research"}
-          </RainbowText>
+          <div className="flex items-center justify-center w-full">
+            <span className="font-extrabold text-3xl tracking-wide" style={{ color: '#888' }}>
+              Thinkin
+            </span>
+            <span className="font-extrabold text-3xl tracking-wide text-white">g...</span>
+            <span className="ml-2 cursor-block"></span>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardFooter>
@@ -417,13 +421,13 @@ function PlanCard({
     <Card className={cn("w-full", className)}>
       <CardHeader>
         <CardTitle>
-          <Markdown animated>
-            {`### ${
-              plan.title !== undefined && plan.title !== ""
-                ? plan.title
-                : "Deep Research"
-            }`}
-          </Markdown>
+          <div className="flex items-center justify-center w-full ml-2">
+            <span className="font-extrabold text-3xl tracking-wide" style={{ color: '#888' }}>
+              Thinkin
+            </span>
+            <span className="font-extrabold text-3xl tracking-wide text-white">g...</span>
+            <span className="ml-2 cursor-block"></span>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
